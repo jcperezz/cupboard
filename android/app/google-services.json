@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1079318247904",
+    "firebase_url": "https://cupboard-54d1c-default-rtdb.firebaseio.com",
+    "project_id": "cupboard-54d1c",
+    "storage_bucket": "cupboard-54d1c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079318247904:android:83d024c7fd4b2652ec5385",
+        "android_client_info": {
+          "package_name": "com.jcperezz.cupboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079318247904-8mjgmtjk28q22g8868131h08h8q8nm9l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgOimYqNVtYyDn7SV-KVA5_N9ZeaQqs94"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079318247904-8mjgmtjk28q22g8868131h08h8q8nm9l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

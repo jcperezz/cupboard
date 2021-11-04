@@ -2,6 +2,7 @@ import 'package:cupboard/providers/local_storage_provider.dart';
 import 'package:cupboard/routes/router.dart';
 import 'package:cupboard/services/navigation_service.dart';
 import 'package:cupboard/services/user_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,6 @@ void main() async {
   runApp(AppState());
 }
 
-/*
 class MyFirebaseApp extends StatefulWidget {
   @override
   _MyFirebaseAppState createState() => _MyFirebaseAppState();
@@ -52,7 +52,6 @@ class _MyFirebaseAppState extends State<MyFirebaseApp> {
     );
   }
 }
-*/
 
 class AppState extends StatelessWidget {
   @override
