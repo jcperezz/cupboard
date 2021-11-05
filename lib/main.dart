@@ -1,6 +1,8 @@
 import 'package:cupboard/providers/local_storage_provider.dart';
 import 'package:cupboard/routes/router.dart';
+import 'package:cupboard/services/authentication_service.dart';
 import 'package:cupboard/services/navigation_service.dart';
+import 'package:cupboard/services/notifications_service.dart';
 import 'package:cupboard/services/user_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ void main() async {
   await SharedPreferencesProvider.init();
 
   RouterManager.configureRoutes();
-  runApp(AppState());
+  runApp(MyFirebaseApp());
 }
 
 class MyFirebaseApp extends StatefulWidget {
@@ -58,6 +60,7 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthService(), lazy: false),
         ChangeNotifierProvider(create: (_) => UserService(), lazy: false),
         ChangeNotifierProvider(create: (_) => CategoriesService()),
         ChangeNotifierProvider(create: (_) => NavigationService())
@@ -75,7 +78,7 @@ class MyApp extends StatelessWidget {
       title: 'Cupboard',
       initialRoute: '/',
       onGenerateRoute: RouterManager.router.generator,
-      //navigatorKey: locator<NavigationService>().navigatorKey,
+      scaffoldMessengerKey: NotificationsService.messengerKey,
     );
   }
 }

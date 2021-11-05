@@ -1,15 +1,27 @@
 import 'dart:ui';
+import 'package:cupboard/services/notifications_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:cupboard/constants/Theme.dart';
+import 'package:cupboard/constants/validators.dart';
 
+import 'package:cupboard/services/authentication_service.dart';
 //widgets
-import 'package:cupboard/widgets/input.dart';
 import 'package:cupboard/widgets/navbar.dart';
+import 'package:cupboard/widgets/form-input.dart';
+import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final double height = window.physicalSize.height;
+  final _formKey = GlobalKey<FormState>();
+  String _email = "";
+  String _secret = "";
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +34,10 @@ class LoginScreen extends StatelessWidget {
         ),
         extendBodyBehindAppBar: true,
         body: Stack(
-          children: [buildBackground(), buildSafeArea(context)],
+          children: [
+            _buildBackground(),
+            buildSafeArea(context),
+          ],
         ));
   }
 
@@ -36,37 +51,39 @@ class LoginScreen extends StatelessWidget {
               elevation: 5,
               clipBehavior: Clip.antiAlias,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4.0),
+                borderRadius: BorderRadius.circular(ArgonColors.shape_radius),
               ),
               child: Column(
                 children: [
-                  buildPageTitle(context),
-                  Container(
-                      height: MediaQuery.of(context).size.height * 0.63,
-                      color: Color.fromRGBO(244, 245, 247, 1),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildFormLegend(),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildNameInput(),
-                                  _buildEmailInput(),
-                                  _buildPasswordInput(),
-                                  _buildPasswordLegend(),
-                                ],
-                              ),
-                              _buildCheckPolicy(context),
-                              _buildSubmitButton(context)
-                            ],
+                  _buildPageTitle(context),
+                  Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.always,
+                    child: Container(
+                        height: MediaQuery.of(context).size.height * 0.63,
+                        color: Color.fromRGBO(244, 245, 247, 1),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _buildFormLegend(),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildEmailInput(),
+                                    _buildPasswordInput(),
+                                  ],
+                                ),
+                                SizedBox(height: 100),
+                                _buildSubmitButton(context)
+                              ],
+                            ),
                           ),
-                        ),
-                      ))
+                        )),
+                  )
                 ],
               )),
         ),
@@ -74,7 +91,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Padding _buildFormLegend() {
+  Widget _buildFormLegend() {
     return Padding(
       padding: const EdgeInsets.only(top: 24.0, bottom: 24.0),
       child: Center(
@@ -87,64 +104,60 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Padding _buildNameInput() {
+  Widget _buildEmailInput() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Input(
-        placeholder: "Name",
-        prefixIcon: Icon(Icons.school),
+      child: FormInput(
+        onChanged: (value) => setState(() => _email = value),
+        placeholder: "Email",
+        prefixIcon: Icon(Icons.email),
+        validator: (value) => Validator<String>(value)
+            .mandatory(message: "mi mamá me mima")
+            .length(min: 5, max: 64)
+            .isEmail()
+            .validate(),
       ),
     );
   }
 
-  Padding _buildEmailInput() {
+  Widget _buildPasswordInput() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Input(placeholder: "Email", prefixIcon: Icon(Icons.email)),
-    );
-  }
-
-  Padding _buildPasswordInput() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Input(placeholder: "Password", prefixIcon: Icon(Icons.lock)),
-    );
-  }
-
-  Padding _buildPasswordLegend() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 24.0),
-      child: RichText(
-          text: TextSpan(
-              text: "password strength: ",
-              style: TextStyle(color: ArgonColors.muted),
-              children: [
-            TextSpan(
-                text: "strong",
-                style: TextStyle(
-                    fontWeight: FontWeight.w600, color: ArgonColors.success))
-          ])),
+      child: FormInput(
+        onChanged: (value) => setState(() => _secret = value),
+        obscureText: true,
+        placeholder: "Password",
+        prefixIcon: Icon(Icons.lock),
+        validator: (value) => Validator<String>(value)
+            .mandatory(message: "mi mamá me mima")
+            .length(min: 5, max: 64)
+            .validate(),
+      ),
     );
   }
 
   Padding _buildSubmitButton(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Center(
-        child: FlatButton(
-          textColor: ArgonColors.white,
-          color: ArgonColors.primary,
-          onPressed: () {
-            // Respond to button press
-            Navigator.pushNamed(context, '/home');
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: ArgonColors.primary,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(ArgonColors.shape_radius)),
           ),
+          onPressed: () {
+            print("tales $_email $_secret");
+
+            if (_formKey.currentState!.validate()) {
+              authService.signIn(_email, _secret);
+            }
+          },
           child: Padding(
               padding:
                   EdgeInsets.only(left: 16.0, right: 16.0, top: 12, bottom: 12),
-              child: Text("REGISTER",
+              child: Text("SIGN IN",
                   style:
                       TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0))),
         ),
@@ -152,34 +165,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Padding _buildCheckPolicy(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0, top: 0, bottom: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Checkbox(
-              activeColor: ArgonColors.primary,
-              onChanged: (bool? newValue) {},
-              value: false),
-          Text("I agree with the",
-              style: TextStyle(
-                  color: ArgonColors.muted, fontWeight: FontWeight.w200)),
-          GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/pro');
-              },
-              child: Container(
-                margin: EdgeInsets.only(left: 5),
-                child: Text("Privacy Policy",
-                    style: TextStyle(color: ArgonColors.primary)),
-              )),
-        ],
-      ),
-    );
-  }
-
-  Container buildBackground() {
+  Widget _buildBackground() {
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
@@ -188,7 +174,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Container buildPageTitle(BuildContext context) {
+  Widget _buildPageTitle(BuildContext context) {
     return Container(
         height: MediaQuery.of(context).size.height * 0.15,
         decoration: BoxDecoration(
@@ -264,7 +250,6 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Divider()
           ],
         ));
   }
