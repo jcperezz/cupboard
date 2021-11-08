@@ -16,6 +16,13 @@ class Validator<T> {
     return this;
   }
 
+  Validator<T> equals({required String msg, required T target}) {
+    if (!_isvalid) return this;
+    _isvalid = value.toString().compareTo(target.toString()) == 0;
+    this.msg = msg;
+    return this;
+  }
+
   Validator<T> length(
       {String msg = "Debe tener una longitud", int min = 0, int max = -1}) {
     if (!_isvalid) return this;

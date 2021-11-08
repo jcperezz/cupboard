@@ -11,6 +11,7 @@ import 'package:cupboard/services/authentication_service.dart';
 //widgets
 import 'package:cupboard/widgets/navbar.dart';
 import 'package:cupboard/widgets/form-input.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,26 +24,32 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String _email = "";
   String _secret = "";
+  bool _isSignUp = false;
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Scaffold(
-        appBar: Navbar(
-          transparent: true,
-          title: "",
-          leftOptions: false,
-          rightOptions: false,
-        ),
-        extendBodyBehindAppBar: true,
-        body: Stack(
+      appBar: Navbar(
+        transparent: true,
+        title: "",
+        leftOptions: false,
+        rightOptions: false,
+      ),
+      extendBodyBehindAppBar: true,
+      body: LoadingOverlay(
+        child: Stack(
           children: [
             _buildBackground(),
-            buildSafeArea(context),
+            _buildSafeArea(context),
           ],
-        ));
+        ),
+        isLoading: authService.isLoading,
+      ),
+    );
   }
 
-  Widget buildSafeArea(BuildContext context) {
+  Widget _buildSafeArea(BuildContext context) {
     return SafeArea(
       child: ListView(children: [
         Padding(
@@ -75,11 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _buildEmailInput(),
-                                    _buildPasswordInput(),
+                                    ..._buildPasswordInput(),
                                   ],
                                 ),
                                 SizedBox(height: 100),
-                                _buildSubmitButton(context)
+                                _buildFormButtons(context)
                               ],
                             ),
                           ),
@@ -122,24 +129,45 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPasswordInput() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: FormInput(
-        onChanged: (value) => setState(() => _secret = value),
-        obscureText: true,
-        keyboardType: TextInputType.text,
-        placeholder: Labels.of(context).getMessage('password_label'),
-        prefixIcon: Icon(Icons.lock),
-        validator: (value) => Validator<String>(value)
-            .mandatory(msg: Labels.of(context).getMessage('password_mandatory'))
-            .length(min: 5, max: 64)
-            .validate(),
+  List<Widget> _buildPasswordInput() {
+    return [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FormInput(
+          onChanged: (value) => setState(() => _secret = value),
+          obscureText: true,
+          keyboardType: TextInputType.text,
+          placeholder: Labels.of(context).getMessage('password_label'),
+          prefixIcon: Icon(Icons.lock),
+          validator: (value) => Validator<String>(value)
+              .mandatory(
+                  msg: Labels.of(context).getMessage('password_mandatory'))
+              .length(min: 5, max: 64)
+              .validate(),
+        ),
       ),
-    );
+      if (_isSignUp)
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FormInput(
+            obscureText: true,
+            keyboardType: TextInputType.text,
+            placeholder: Labels.of(context).getMessage('password_repeat_label'),
+            prefixIcon: Icon(Icons.lock),
+            validator: (value) => Validator<String>(value)
+                .mandatory(
+                    msg: Labels.of(context).getMessage('password_mandatory'))
+                .equals(
+                    msg: Labels.of(context).getMessage('password_equals'),
+                    target: _secret)
+                .length(min: 5, max: 64)
+                .validate(),
+          ),
+        ),
+    ];
   }
 
-  Padding _buildSubmitButton(BuildContext context) {
+  Padding _buildFormButtons(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     return Padding(
       padding: const EdgeInsets.only(top: 16),
@@ -150,11 +178,13 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Button.primary(
               keyMessage: "signin_submit",
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  authService.signIn(context, _email, _secret);
-                }
-              },
+              onPressed: !_isSignUp
+                  ? () {
+                      if (_formKey.currentState!.validate()) {
+                        authService.signIn(context, _email, _secret);
+                      }
+                    }
+                  : null,
             ),
             SizedBox(
               width: 10,
@@ -162,8 +192,13 @@ class _LoginScreenState extends State<LoginScreen> {
             Button.secondary(
               keyMessage: "signup_submit",
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  authService.signIn(context, _email, _secret);
+                if (_isSignUp && _formKey.currentState!.validate()) {
+                  authService.createUserWithEmailAndPassword(
+                      context, _email, _secret);
+                } else {
+                  setState(() {
+                    _isSignUp = true;
+                  });
                 }
               },
             ),
