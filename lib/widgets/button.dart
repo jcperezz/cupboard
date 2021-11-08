@@ -1,64 +1,67 @@
+import 'package:cupboard/constants/Theme.dart';
+import 'package:cupboard/locale/labels.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-const double defaultBorderRadius = 3.0;
-
-class StretchableButton extends StatelessWidget {
+class Button extends StatelessWidget {
   final VoidCallback? onPressed;
-  final double borderRadius;
-  final double? buttonPadding;
-  final Color? buttonColor, splashColor;
-  final Color? buttonBorderColor;
-  final List<Widget> children;
+  final String keyMessage;
+  final Color? primary;
+  final Color? textColor;
+  final IconData? icon;
 
-  StretchableButton({
-    required this.buttonColor,
-    required this.borderRadius,
-    required this.children,
-    this.splashColor,
-    this.buttonBorderColor,
+  const Button({
+    Key? key,
     this.onPressed,
-    this.buttonPadding,
-  });
+    required this.keyMessage,
+    this.primary,
+    this.textColor,
+    this.icon,
+  }) : super(key: key);
+
+  const Button.primary(
+      {required String keyMessage, VoidCallback? onPressed, IconData? icon})
+      : this(
+          keyMessage: keyMessage,
+          onPressed: onPressed,
+          primary: ArgonColors.primary,
+          textColor: ArgonColors.white,
+          icon: icon,
+        );
+
+  const Button.secondary(
+      {required String keyMessage, VoidCallback? onPressed, IconData? icon})
+      : this(
+          keyMessage: keyMessage,
+          onPressed: onPressed,
+          primary: ArgonColors.secondary,
+          textColor: ArgonColors.primary,
+          icon: icon,
+        );
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        var contents = List<Widget>.from(children);
-
-        if (constraints.minWidth == 0) {
-          contents.add(SizedBox.shrink());
-        } else {
-          contents.add(Spacer());
-        }
-
-        BorderSide bs;
-        if (buttonBorderColor != null) {
-          bs = BorderSide(
-            color: buttonBorderColor!,
-          );
-        } else {
-          bs = BorderSide.none;
-        }
-
-        return ButtonTheme(
-          height: 40.0,
-          padding: EdgeInsets.all(buttonPadding ?? 0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-            side: bs,
-          ),
-          child: RaisedButton(
-            onPressed: onPressed,
-            color: buttonColor,
-            splashColor: splashColor,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: contents,
-            ),
-          ),
-        );
-      },
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: primary,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ArgonColors.shape_radius)),
+      ),
+      onPressed: onPressed,
+      child: Padding(
+          padding:
+              EdgeInsets.only(left: 16.0, right: 16.0, top: 12, bottom: 12),
+          child: Row(
+            children: [
+              if (icon != null) Icon(FontAwesomeIcons.github, size: 13),
+              if (icon != null) SizedBox(width: 5),
+              Text(Labels.of(context).getMessage(keyMessage),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      color: textColor)),
+            ],
+          )),
     );
   }
 }

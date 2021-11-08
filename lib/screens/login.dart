@@ -1,5 +1,6 @@
 import 'dart:ui';
-import 'package:cupboard/services/notifications_service.dart';
+import 'package:cupboard/locale/labels.dart';
+import 'package:cupboard/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -95,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 24.0, bottom: 24.0),
       child: Center(
-        child: Text("Or sign up with the classic way",
+        child: Text(Labels.of(context).getMessage("signin_subtitle"),
             style: TextStyle(
                 color: ArgonColors.text,
                 fontWeight: FontWeight.w200,
@@ -109,10 +110,11 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.all(8.0),
       child: FormInput(
         onChanged: (value) => setState(() => _email = value),
-        placeholder: "Email",
+        placeholder: Labels.of(context).getMessage('email_label'),
+        keyboardType: TextInputType.emailAddress,
         prefixIcon: Icon(Icons.email),
         validator: (value) => Validator<String>(value)
-            .mandatory(message: "mi mamá me mima")
+            .mandatory(msg: Labels.of(context).getMessage('email_mandatory'))
             .length(min: 5, max: 64)
             .isEmail()
             .validate(),
@@ -126,10 +128,11 @@ class _LoginScreenState extends State<LoginScreen> {
       child: FormInput(
         onChanged: (value) => setState(() => _secret = value),
         obscureText: true,
-        placeholder: "Password",
+        keyboardType: TextInputType.text,
+        placeholder: Labels.of(context).getMessage('password_label'),
         prefixIcon: Icon(Icons.lock),
         validator: (value) => Validator<String>(value)
-            .mandatory(message: "mi mamá me mima")
+            .mandatory(msg: Labels.of(context).getMessage('password_mandatory'))
             .length(min: 5, max: 64)
             .validate(),
       ),
@@ -141,25 +144,30 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: ArgonColors.primary,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ArgonColors.shape_radius)),
-          ),
-          onPressed: () {
-            print("tales $_email $_secret");
-
-            if (_formKey.currentState!.validate()) {
-              authService.signIn(_email, _secret);
-            }
-          },
-          child: Padding(
-              padding:
-                  EdgeInsets.only(left: 16.0, right: 16.0, top: 12, bottom: 12),
-              child: Text("SIGN IN",
-                  style:
-                      TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0))),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Button.primary(
+              keyMessage: "signin_submit",
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  authService.signIn(context, _email, _secret);
+                }
+              },
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Button.secondary(
+              keyMessage: "signup_submit",
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  authService.signIn(context, _email, _secret);
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -187,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Center(
                 child: Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text("Sign in with",
+              child: Text(Labels.of(context).getMessage('signin_title'),
                   style: TextStyle(color: ArgonColors.text, fontSize: 16.0)),
             )),
             Padding(
@@ -196,7 +204,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Container(
-                    // width: 0,
                     height: 36,
                     child: RaisedButton(
                         textColor: ArgonColors.primary,

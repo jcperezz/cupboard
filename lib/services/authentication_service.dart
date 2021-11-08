@@ -1,3 +1,4 @@
+import 'package:cupboard/locale/labels.dart';
 import 'package:cupboard/providers/firebase_provider.dart';
 import 'package:cupboard/services/notifications_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +9,8 @@ class AuthService extends ChangeNotifier {
     isAuth();
   }
 
-  Future<void> signIn(String email, String secret) async {
+  Future<void> signIn(BuildContext context, String email, String secret) async {
+    Labels label = Labels.of(context);
     try {
       print("autenticando usuario");
 
@@ -26,12 +28,10 @@ class AuthService extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print("No user found for that email.");
-        NotificationsService.showSnackbar("No user found for that email.");
+        NotificationsService.showSnackbar(label.getMessage("no_user_found"));
       } else if (e.code == 'wrong-password') {
         print("Wrong password provided for that user.");
-
-        NotificationsService.showSnackbar(
-            "Wrong password provided for that user.");
+        NotificationsService.showSnackbar(label.getMessage("wrong_password"));
       } else {
         print("error ${e.message}");
         NotificationsService.showSnackbar("${e.message}");
@@ -42,14 +42,13 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  void createUserWithEmailAndPassword() async {
+  Future<void> createUserWithEmailAndPassword(
+      String email, String secret) async {
     print("inicio usuario registrado");
     try {
       UserCredential userCredential = await FirebaseProvider()
           .auth
-          .createUserWithEmailAndPassword(
-              email: "barry.allen@example.com",
-              password: "SuperSecretPassword!");
+          .createUserWithEmailAndPassword(email: email, password: secret);
 
       print("usuario registrado");
     } on FirebaseAuthException catch (e) {

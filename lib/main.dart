@@ -1,3 +1,4 @@
+import 'package:cupboard/locale/labels_delegate.dart';
 import 'package:cupboard/providers/local_storage_provider.dart';
 import 'package:cupboard/routes/router.dart';
 import 'package:cupboard/services/authentication_service.dart';
@@ -6,6 +7,7 @@ import 'package:cupboard/services/notifications_service.dart';
 import 'package:cupboard/services/user_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:cupboard/services/categories_service.dart';
@@ -79,6 +81,15 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       onGenerateRoute: RouterManager.router.generator,
       scaffoldMessengerKey: NotificationsService.messengerKey,
+      localizationsDelegates: const [
+        LabelsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("es", ""),
+        Locale("en", ""),
+      ],
     );
   }
 }
