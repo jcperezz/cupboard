@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 class AuthService extends ChangeNotifier {
   bool isLoading = false;
+  bool userIsAuth = false;
 
   AuthService() {
     isAuth();
@@ -90,11 +91,20 @@ class AuthService extends ChangeNotifier {
   }
 
   Future isAuth() async {
+    isLoading = true;
+    userIsAuth = false;
+    notifyListeners();
     FirebaseProvider().auth.authStateChanges().listen((User? user) {
       if (user == null) {
         print('User is currently signed out!');
+        userIsAuth = false;
+        isLoading = false;
+        notifyListeners();
       } else {
         print('User is signed in!');
+        userIsAuth = true;
+        isLoading = false;
+        notifyListeners();
       }
     });
   }

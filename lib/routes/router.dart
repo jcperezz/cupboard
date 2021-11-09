@@ -1,18 +1,20 @@
 import 'package:cupboard/screens/categories.dart';
 import 'package:cupboard/screens/category.dart';
 import 'package:cupboard/screens/home.dart';
+import 'package:cupboard/screens/loading.dart';
 import 'package:cupboard/screens/login.dart';
 import 'package:cupboard/screens/register.dart';
-import 'package:cupboard/services/user_service.dart';
+import 'package:cupboard/services/authentication_service.dart';
 import 'package:fluro/fluro.dart';
 import 'package:provider/provider.dart';
 
 final homeHandler = Handler(handlerFunc: (context, params) {
-  final authProvider = Provider.of<UserService>(context!);
-
-  return authProvider.authStatus == AuthStatus.authenticated
-      ? Home()
-      : LoginScreen();
+  final authProvider = Provider.of<AuthService>(context!);
+  return authProvider.isLoading
+      ? LoadingScreen()
+      : authProvider.userIsAuth
+          ? Home()
+          : LoginScreen();
 });
 
 final registerHandler = Handler(handlerFunc: (context, params) {
