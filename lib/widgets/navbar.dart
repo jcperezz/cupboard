@@ -149,7 +149,7 @@ class _NavbarState extends State<Navbar> {
                               Navigator.pushNamed(context, '/pro');
                             },
                             child: IconButton(
-                                icon: Icon(Icons.shopping_basket,
+                                icon: Icon(Icons.logout,
                                     color: !widget.transparent
                                         ? (widget.bgColor == ArgonColors.white
                                             ? ArgonColors.initial

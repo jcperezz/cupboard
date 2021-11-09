@@ -1,5 +1,7 @@
 import 'dart:ui' show Color;
 
+import 'package:flutter/cupertino.dart';
+
 class ArgonColors {
   static const Color black = Color(0xFF000000);
 
@@ -36,4 +38,7 @@ class ArgonColors {
   static const Color text = Color.fromRGBO(50, 50, 93, 1.0);
 
   static const double shape_radius = 4.0;
+
+  static const BorderRadius card_border =
+      BorderRadius.all(Radius.circular(8.0));
 }

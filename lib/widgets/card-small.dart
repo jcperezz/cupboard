@@ -3,15 +3,15 @@ import 'package:cupboard/constants/Theme.dart';
 
 class CardSmall extends StatelessWidget {
   final String cta;
-  final int count;
-  final Function tap;
+  final int? count;
+  final GestureTapCallback? tap;
   final String title;
   final ImageProvider<Object> image;
 
   CardSmall(
       {this.title = "Placeholder Title",
       this.cta = "Ver artículos",
-      this.count = 0,
+      this.count,
       required this.image,
       this.tap = defaultFunc});
 
@@ -25,9 +25,7 @@ class CardSmall extends StatelessWidget {
       child: Container(
         height: 310,
         child: GestureDetector(
-          onTap: () {
-            tap();
-          },
+          onTap: tap,
           child: Card(
             elevation: 0.4,
             shape: RoundedRectangleBorder(
@@ -37,11 +35,11 @@ class CardSmall extends StatelessWidget {
               children: [
                 Flexible(
                   flex: 2,
-                  child: buildImage(),
+                  child: _buildImage(),
                 ),
                 Flexible(
                   flex: 1,
-                  child: buildDetails(),
+                  child: _buildDetails(),
                 )
               ],
             ),
@@ -51,10 +49,10 @@ class CardSmall extends StatelessWidget {
     );
   }
 
-  Widget buildDetails() {
+  Widget _buildDetails() {
     return Padding(
       padding:
-          const EdgeInsets.only(top: 4.0, bottom: 8.0, right: 8.0, left: 8.0),
+          const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 8.0, left: 8.0),
       child: Container(
         width: double.infinity,
         child: Column(
@@ -68,14 +66,15 @@ class CardSmall extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            Text(
-              count > 99 ? "+ 99" : "$count",
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: ArgonColors.header,
-                fontSize: 30,
+            if (count != null)
+              Text(
+                count! > 99 ? "+ 99" : "$count",
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  color: ArgonColors.header,
+                  fontSize: 30,
+                ),
               ),
-            ),
             Divider(height: 4, thickness: 0, color: ArgonColors.muted),
             Container(
               width: double.infinity,
@@ -97,7 +96,7 @@ class CardSmall extends StatelessWidget {
     );
   }
 
-  Container buildImage() {
+  Container _buildImage() {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(

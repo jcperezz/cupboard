@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.13.4 <3.0.0"
 
 dependencies:
+  awesome_dialog: ^2.1.1
   carousel_slider: ^4.0.0
   cupertino_icons: ^1.0.2
   dio: ^4.0.1
@@ -29,6 +30,7 @@ dependencies:
   fluro: ^2.0.3
   flutter:
     sdk: flutter
+  flutter_beautiful_popup: ^1.7.0
   flutter_localizations:
     sdk: flutter
   font_awesome_flutter: ^9.2.0
@@ -58,6 +60,12 @@ flutter:
     - assets/img/close_to_expire.png
     - assets/img/expired.png
     - assets/img/pending.png
+    - assets/img/cupboard-gray.png
+    - assets/img/cupboard-blue.png
+    - assets/img/cupboard-2.png
+    - assets/img/Choice-pana.png
+    - assets/img/Coffee-shop-amico.png
+    - assets/img/Coffee-shop-pana.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

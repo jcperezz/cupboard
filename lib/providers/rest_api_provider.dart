@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 class RestApiProvider {
@@ -41,10 +44,14 @@ class RestApiProvider {
   }
 
   Future post(String path, Map<String, dynamic> data) async {
-    final formData = FormData.fromMap(data);
-
     try {
-      final resp = await _dio.post(path, data: formData);
+      final resp = await _dio.post(path,
+          options: Options(headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+          }),
+          data: jsonEncode(data));
+
+      print("status ${resp.statusMessage}");
       return resp.data;
     } catch (e) {
       print(e);

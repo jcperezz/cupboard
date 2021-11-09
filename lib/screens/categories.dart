@@ -58,12 +58,13 @@ class CategoriesScreen extends StatelessWidget {
       children: [
         buildPageTitle(context),
         Container(
-            height: MediaQuery.of(context).size.height * 0.63,
-            color: Color.fromRGBO(244, 245, 247, 1),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(child: _buildGrid(context)),
-            ))
+          height: MediaQuery.of(context).size.height * 0.63,
+          color: Color.fromRGBO(244, 245, 247, 1),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(child: _buildGrid(context)),
+          ),
+        ),
       ],
     );
   }

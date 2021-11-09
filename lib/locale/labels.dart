@@ -29,6 +29,12 @@ class Labels {
       'weak_password': 'The password provided is too weak',
       'email_already_exists': 'The account already exists for that email.',
       'auth_method_not_allowed': 'authentication method not allowed',
+      'cupboard_page_title': 'My Cupboards',
+      'cupboard_name': 'Cupboard Name',
+      'mandatory_name': 'Please enter a name',
+      'new_cupboard': 'New Cupboard',
+      'cancel_label': 'CANCEL',
+      'save_label': 'SAVE',
     },
     'es': {
       'title': 'Hola Mundo',
@@ -50,6 +56,12 @@ class Labels {
       'email_already_exists':
           'El correo ya está asociado a un usuario existente',
       'auth_method_not_allowed': 'Método de autenticación inválido',
+      'cupboard_page_title': 'Mis alacenas',
+      'cupboard_name': 'Nombre Alacena',
+      'mandatory_name': 'El nombre es obligatorio',
+      'new_cupboard': 'Nueva Alacena',
+      'cancel_label': 'CANCELAR',
+      'save_label': 'GUARDAR',
     },
   };
 
@@ -63,7 +75,16 @@ class Labels {
     return message;
   }
 
-  String getMessage(String key) => _localizedValues[locale.languageCode]![key]!;
+  String getMessage(String key) {
+    var localizedValues = _localizedValues[locale.languageCode];
+
+    if (localizedValues != null) {
+      var msg = localizedValues[key];
+      return msg ?? key;
+    } else {
+      return key;
+    }
+  }
 
   String get title => _localizedValues[locale.languageCode]!['title']!;
 }

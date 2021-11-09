@@ -24,12 +24,14 @@ class Validator<T> {
   }
 
   Validator<T> length(
-      {String msg = "Debe tener una longitud", int min = 0, int max = -1}) {
+      {String msg = r'Debe tener una longitud entre $min y $max ',
+      int min = 0,
+      int max = -1}) {
     if (!_isvalid) return this;
     _isvalid = value != null &&
         value.toString().length >= min &&
         value.toString().length <= max;
-    this.msg = msg;
+    this.msg = msg.replaceAll(r'$min', "$min").replaceAll(r'$max', "$max");
     return this;
   }
 
