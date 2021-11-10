@@ -1,18 +1,21 @@
 import 'dart:ui';
-import 'package:cupboard/locale/labels.dart';
-import 'package:cupboard/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:provider/provider.dart';
 
 import 'package:cupboard/constants/Theme.dart';
 import 'package:cupboard/constants/validators.dart';
+import 'package:cupboard/locale/labels.dart';
 
 import 'package:cupboard/services/authentication_service.dart';
+
 //widgets
+import 'package:cupboard/widgets/button.dart';
 import 'package:cupboard/widgets/navbar.dart';
 import 'package:cupboard/widgets/form-input.dart';
-import 'package:loading_overlay/loading_overlay.dart';
-import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -37,65 +40,80 @@ class _LoginScreenState extends State<LoginScreen> {
         rightOptions: false,
       ),
       extendBodyBehindAppBar: true,
-      body: LoadingOverlay(
-        child: Stack(
-          children: [
-            _buildBackground(),
-            _buildSafeArea(context),
-          ],
-        ),
-        isLoading: authService.isLoading,
+      body: _buildScaffoldBody(context, authService),
+    );
+  }
+
+  LoadingOverlay _buildScaffoldBody(
+      BuildContext context, AuthService authService) {
+    return LoadingOverlay(
+      child: Stack(
+        children: [
+          _buildBackground(),
+          kIsWeb
+              ? Center(
+                  child: SizedBox(
+                    width: 400,
+                    child: _buildSafeArea(context),
+                  ),
+                )
+              : _buildSafeArea(context),
+        ],
       ),
+      isLoading: authService.isLoading,
     );
   }
 
   Widget _buildSafeArea(BuildContext context) {
     return SafeArea(
-      child: ListView(children: [
-        Padding(
-          padding: const EdgeInsets.only(
-              top: 16, left: 24.0, right: 24.0, bottom: 32),
-          child: Card(
-              elevation: 5,
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ArgonColors.shape_radius),
-              ),
+      child: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 16, left: 24.0, right: 24.0, bottom: 32),
+            child: Card(
+                elevation: 5,
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(ArgonColors.shape_radius),
+                ),
+                child: Column(
+                  children: [_buildPageTitle(context), _buildForm(context)],
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Form _buildForm(BuildContext context) {
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.always,
+      child: Container(
+          //height: MediaQuery.of(context).size.height * 0.63,
+          color: Color.fromRGBO(244, 245, 247, 1),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildPageTitle(context),
-                  Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.always,
-                    child: Container(
-                        height: MediaQuery.of(context).size.height * 0.63,
-                        color: Color.fromRGBO(244, 245, 247, 1),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildFormLegend(),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildEmailInput(),
-                                    ..._buildPasswordInput(),
-                                  ],
-                                ),
-                                SizedBox(height: 100),
-                                _buildFormButtons(context)
-                              ],
-                            ),
-                          ),
-                        )),
-                  )
+                  _buildFormLegend(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildEmailInput(),
+                      ..._buildPasswordInput(),
+                    ],
+                  ),
+                  //SizedBox(height: 100),
+                  _buildFormButtons(context)
                 ],
-              )),
-        ),
-      ]),
+              ),
+            ),
+          )),
     );
   }
 
