@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cupboard/constants/images.dart';
 import 'package:cupboard/constants/validators.dart';
 import 'package:cupboard/locale/labels.dart';
+import 'package:cupboard/models/Status.dart';
 import 'package:cupboard/models/cupboard.dart';
 import 'package:cupboard/services/cupboards_service.dart';
 import 'package:cupboard/services/notifications_service.dart';
@@ -97,11 +98,11 @@ class Home extends StatelessWidget {
 
   Widget _buildCard(BuildContext context, Cupboard data) {
     return CardSmall(
-        cta: "Ver productos",
-        title: data.name,
+        cta: Labels.of(context).getMessage("show_products"),
+        title: "${data.name}",
         image: AssetImage("assets/img/${data.image}"),
         tap: () {
-          //Navigator.pushNamed(context, status.navigationName);
+          Navigator.pushNamed(context, "/cupboard/${data.id}");
         });
   }
 
@@ -265,8 +266,19 @@ class __BodyDialogState extends State<_BodyDialog> {
               keyMessage: "save_label",
               onPressed: () {
                 if (_formKey.currentState!.validate() && _image != null) {
-                  service.add(
-                      new Cupboard(count: "0", image: _image!, name: _name!));
+                  final Cupboard cupboard =
+                      new Cupboard(count: "0", image: _image!, name: _name!);
+
+                  cupboard.stages = [];
+                  cupboard.stages!
+                      .add(new Stage(statusEnum: "pending", total: 0));
+                  cupboard.stages!
+                      .add(new Stage(statusEnum: "avalaible", total: 0));
+                  cupboard.stages!
+                      .add(new Stage(statusEnum: "close_to_expire", total: 0));
+                  cupboard.stages!
+                      .add(new Stage(statusEnum: "expired", total: 0));
+                  service.add(cupboard);
                 }
 
                 Navigator.of(context).pop();

@@ -1,6 +1,5 @@
 import 'package:cupboard/models/cupboard.dart';
 import 'package:cupboard/providers/rest_api_provider.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class CupboardsService extends ChangeNotifier {
@@ -19,8 +18,8 @@ class CupboardsService extends ChangeNotifier {
       final Map<String, dynamic> response =
           await RestApiProvider().get("/cupboards.json");
 
-      cupboards = response
-          .map((key, value) => new MapEntry(key, new Cupboard.fromMap(value)));
+      cupboards = response.map((key, value) =>
+          new MapEntry(key, new Cupboard.fromMap(value, id: key)));
 
       isLoading = false;
       notifyListeners();

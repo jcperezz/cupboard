@@ -108,4 +108,8 @@ class AuthService extends ChangeNotifier {
       }
     });
   }
+
+  Future signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
 }

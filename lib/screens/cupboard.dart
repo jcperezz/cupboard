@@ -1,4 +1,6 @@
 import 'package:cupboard/models/Status.dart';
+import 'package:cupboard/models/cupboard.dart';
+import 'package:cupboard/services/cupboards_service.dart';
 import 'package:cupboard/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 
@@ -10,21 +12,25 @@ import 'package:cupboard/widgets/navbar.dart';
 import 'package:cupboard/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 
-class Home extends StatelessWidget {
-  // final GlobalKey _scaffoldKey = new GlobalKey();
+class CupboardScreen extends StatelessWidget {
+  final String? uid;
+
+  const CupboardScreen({this.uid});
+
   @override
   Widget build(BuildContext context) {
+    final CupboardsService service = Provider.of<CupboardsService>(context);
+    final Cupboard cupboard = service.cupboards[uid!]!;
+
     return Scaffold(
       appBar: Navbar(
         transparent: true,
-        title: "Home",
+        title: "${cupboard.name}",
         searchBar: true,
-        //categoryOne: "Beauty",
-        //categoryTwo: "Fashion",
+        backButton: true,
       ),
       extendBodyBehindAppBar: true,
       backgroundColor: ArgonColors.bgColorScreen,
-      // key: _scaffoldKey,
       drawer: ArgonDrawer(currentPage: "Home"),
       body: Stack(
         children: [

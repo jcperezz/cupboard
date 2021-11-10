@@ -44,6 +44,7 @@ class RestApiProvider {
   }
 
   Future post(String path, Map<String, dynamic> data) async {
+    print("json ${jsonEncode(data)}");
     try {
       final resp = await _dio.post(path,
           options: Options(headers: {

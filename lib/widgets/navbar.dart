@@ -1,5 +1,7 @@
+import 'package:cupboard/services/authentication_service.dart';
 import 'package:cupboard/widgets/input.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:cupboard/constants/Theme.dart';
 
@@ -66,6 +68,8 @@ class _NavbarState extends State<Navbar> {
         widget.categoryOne.isNotEmpty && widget.categoryTwo.isNotEmpty;
     final bool tagsExist =
         widget.tags == null ? false : (widget.tags!.length == 0 ? false : true);
+
+    final AuthService authService = Provider.of<AuthService>(context);
 
     return Container(
         height: widget.searchBar
@@ -146,7 +150,7 @@ class _NavbarState extends State<Navbar> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/pro');
+                              authService.signOut();
                             },
                             child: IconButton(
                                 icon: Icon(Icons.logout,

@@ -1,5 +1,6 @@
 import 'package:cupboard/screens/categories.dart';
 import 'package:cupboard/screens/category.dart';
+import 'package:cupboard/screens/cupboard.dart';
 import 'package:cupboard/screens/home.dart';
 import 'package:cupboard/screens/loading.dart';
 import 'package:cupboard/screens/login.dart';
@@ -19,6 +20,14 @@ final homeHandler = Handler(handlerFunc: (context, params) {
 
 final registerHandler = Handler(handlerFunc: (context, params) {
   return RegisterScreen();
+});
+
+final cupboardHandler = Handler(handlerFunc: (context, params) {
+  if (params['uid']?.first != null) {
+    return CupboardScreen(uid: params['uid']!.first);
+  } else {
+    return Home();
+  }
 });
 
 final categoriesHandler = Handler(handlerFunc: (context, params) {
@@ -47,6 +56,9 @@ class RouterManager {
 
     router.define('/new-category',
         handler: categoryHandler, transitionType: TransitionType.fadeIn);
+
+    router.define('/cupboard/:uid',
+        handler: cupboardHandler, transitionType: TransitionType.fadeIn);
 
     router.notFoundHandler = homeHandler;
   }

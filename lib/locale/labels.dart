@@ -35,6 +35,7 @@ class Labels {
       'new_cupboard': 'New Cupboard',
       'cancel_label': 'CANCEL',
       'save_label': 'SAVE',
+      'show_products': 'Show Items'
     },
     'es': {
       'title': 'Hola Mundo',
@@ -62,6 +63,7 @@ class Labels {
       'new_cupboard': 'Nueva Alacena',
       'cancel_label': 'CANCELAR',
       'save_label': 'GUARDAR',
+      'show_products': 'Ver elementos'
     },
   };
 
