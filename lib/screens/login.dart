@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -31,33 +30,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return _buildPageBody(context);
+  }
+
+  Widget _buildPageBody(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    return Scaffold(
-      appBar: Navbar(
-        transparent: true,
-        title: "",
-        leftOptions: false,
-        rightOptions: false,
-      ),
-      extendBodyBehindAppBar: true,
-      body: _buildScaffoldBody(context, authService),
+    return LoadingOverlay(
+      child: _buildSafeArea(context),
+      isLoading: authService.isLoading,
     );
   }
 
-  LoadingOverlay _buildScaffoldBody(
-      BuildContext context, AuthService authService) {
+  Widget _buildScaffoldBody(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return LoadingOverlay(
       child: Stack(
         children: [
           _buildBackground(),
-          kIsWeb
-              ? Center(
-                  child: SizedBox(
-                    width: 400,
-                    child: _buildSafeArea(context),
-                  ),
-                )
-              : _buildSafeArea(context),
+          _buildSafeArea(context),
         ],
       ),
       isLoading: authService.isLoading,
@@ -68,21 +58,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return SafeArea(
       child: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 16, left: 24.0, right: 24.0, bottom: 32),
-            child: Card(
-                elevation: 5,
-                clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(ArgonColors.shape_radius),
-                ),
-                child: Column(
-                  children: [_buildPageTitle(context), _buildForm(context)],
-                )),
-          ),
+          _buildLoginBody(context),
         ],
       ),
+    );
+  }
+
+  Widget _buildLoginBody(BuildContext context) {
+    return Padding(
+      padding:
+          const EdgeInsets.only(top: 16, left: 24.0, right: 24.0, bottom: 32),
+      child: Card(
+          elevation: 5,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ArgonColors.shape_radius),
+          ),
+          child: Column(
+            children: [_buildPageTitle(context), _buildForm(context)],
+          )),
     );
   }
 

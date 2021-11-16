@@ -1,16 +1,14 @@
-import 'package:cupboard/models/Status.dart';
-import 'package:cupboard/models/cupboard.dart';
-import 'package:cupboard/services/cupboards_service.dart';
-import 'package:cupboard/services/navigation_service.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
-import 'package:cupboard/constants/Theme.dart';
+import 'package:provider/provider.dart';
+
+import 'package:cupboard/models/Status.dart';
+
+import 'package:cupboard/services/cupboards_service.dart';
 
 //widgets
 import 'package:cupboard/widgets/card-small.dart';
-import 'package:cupboard/widgets/navbar.dart';
-import 'package:cupboard/widgets/drawer.dart';
-import 'package:provider/provider.dart';
 
 class CupboardScreen extends StatelessWidget {
   final String? uid;
@@ -19,76 +17,57 @@ class CupboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CupboardsService service = Provider.of<CupboardsService>(context);
-    final Cupboard cupboard = service.cupboards[uid!]!;
+    return _buildPageBody(context);
+  }
 
-    return Scaffold(
-      appBar: Navbar(
-        transparent: true,
-        title: "${cupboard.name}",
-        searchBar: true,
-        backButton: true,
-      ),
-      extendBodyBehindAppBar: true,
-      backgroundColor: ArgonColors.bgColorScreen,
-      drawer: ArgonDrawer(currentPage: "Home"),
-      body: Stack(
-        children: [
-          buildBackground(),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Container(
-                padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                child: buildBody(context),
-              ),
-            ),
-          )
-        ],
+  Widget _buildPageBody(BuildContext context) {
+    final CupboardsService service =
+        Provider.of<CupboardsService>(context, listen: false);
+
+    if (service.selected == null) {
+      service.findById(uid!);
+    }
+
+    return LoadingOverlay(
+      child: _buildSafeArea(context),
+      isLoading: service.isLoading,
+    );
+  }
+
+  Widget _buildSafeArea(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: Container(
+          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          child: _buildGrid(context),
+        ),
       ),
     );
   }
 
-  Column buildBody(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(height: 8.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            buildCard(context, Status.pending()),
-            buildCard(context, Status.expired()),
-          ],
-        ),
-        SizedBox(height: 8.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            buildCard(context, Status.closeToExpire()),
-            buildCard(context, Status.avalaible()),
-          ],
-        ),
+  Widget _buildGrid(BuildContext context) {
+    return GridView.extent(
+      maxCrossAxisExtent: 300,
+      padding: const EdgeInsets.all(4),
+      mainAxisSpacing: 2,
+      crossAxisSpacing: 2,
+      children: [
+        _buildCard(context, Status.pending()),
+        _buildCard(context, Status.expired()),
+        _buildCard(context, Status.closeToExpire()),
+        _buildCard(context, Status.avalaible()),
       ],
     );
   }
 
-  Widget buildCard(BuildContext context, Status status) {
+  Widget _buildCard(BuildContext context, Status status) {
     return CardSmall(
         cta: "Ver artículos",
         title: status.title,
         image: AssetImage("assets/img/" + status.img),
         tap: () {
-          Navigator.pushNamed(context, status.navigationName);
+          Navigator.pushNamed(context, "/products");
         });
-  }
-
-  Widget buildBackground() {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: const AssetImage("assets/img/register-bg.png"),
-            fit: BoxFit.cover),
-      ),
-    );
   }
 }

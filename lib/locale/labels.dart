@@ -35,7 +35,8 @@ class Labels {
       'new_cupboard': 'New Cupboard',
       'cancel_label': 'CANCEL',
       'save_label': 'SAVE',
-      'show_products': 'Show Items'
+      'show_products': 'Show Items',
+      'select_image': 'Please select an image',
     },
     'es': {
       'title': 'Hola Mundo',
@@ -63,7 +64,8 @@ class Labels {
       'new_cupboard': 'Nueva Alacena',
       'cancel_label': 'CANCELAR',
       'save_label': 'GUARDAR',
-      'show_products': 'Ver elementos'
+      'show_products': 'Ver elementos',
+      'select_image': 'Seleccione una imagen',
     },
   };
 
@@ -77,8 +79,12 @@ class Labels {
     return message;
   }
 
-  String getMessage(String key) {
-    var localizedValues = _localizedValues[locale.languageCode];
+  String getMessage(String? key) {
+    if (key == null) {
+      return "";
+    }
+
+    final localizedValues = _localizedValues[locale.languageCode];
 
     if (localizedValues != null) {
       var msg = localizedValues[key];

@@ -3,8 +3,9 @@ import 'package:cupboard/providers/rest_api_provider.dart';
 import 'package:flutter/material.dart';
 
 class CupboardsService extends ChangeNotifier {
-  bool isLoading = true;
+  bool isLoading = false;
   Map<String, Cupboard> cupboards = Map();
+  Cupboard? selected;
 
   CupboardsService() {
     _getAll();
@@ -46,6 +47,24 @@ class CupboardsService extends ChangeNotifier {
 
       isLoading = false;
       _getAll();
+      notifyListeners();
+    } catch (e) {
+      print(e);
+      return Map();
+    }
+  }
+
+  Future findById(String id) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final Map<String, dynamic> response =
+          await RestApiProvider().get("/cupboards/$id.json");
+
+      selected = new Cupboard.fromMap(response, id: id);
+
+      isLoading = false;
       notifyListeners();
     } catch (e) {
       print(e);

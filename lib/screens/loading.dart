@@ -7,8 +7,8 @@ class LoadingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 500,
-        height: 500,
+        width: 300,
+        height: 300,
         child: CircularProgressIndicator(),
       ),
     );

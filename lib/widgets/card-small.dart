@@ -21,9 +21,10 @@ class CardSmall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Container(
-        height: 310,
+    return Container(
+      height: 310,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: tap,
           child: Card(

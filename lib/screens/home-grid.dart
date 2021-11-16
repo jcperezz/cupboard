@@ -18,7 +18,7 @@ import 'package:cupboard/widgets/card-small.dart';
 import 'package:cupboard/widgets/form-input.dart';
 import 'package:cupboard/widgets/image-slider.dart';
 
-class Home extends StatelessWidget {
+class HomeGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _buildPageBody(context);
@@ -38,43 +38,35 @@ class Home extends StatelessWidget {
         padding: const EdgeInsets.only(top: 16.0),
         child: Container(
           padding: EdgeInsets.only(left: 24.0, right: 24.0),
-          child: _buildBody(context),
+          child: _buildGrid(context),
         ),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildGrid(BuildContext context) {
     final CupboardsService service = Provider.of<CupboardsService>(context);
     Iterable<Cupboard> _cupboards = service.cupboards.values;
     Iterator<Cupboard> it = _cupboards.iterator;
 
-    return Column(
-      children: <Widget>[
-        SizedBox(height: 8.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            it.moveNext()
-                ? _buildCard(context, it.current)
-                : _buildNewCupboard(context),
-            it.moveNext()
-                ? _buildCard(context, it.current)
-                : _buildNewCupboard(context),
-          ],
-        ),
-        SizedBox(height: 8.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            it.moveNext()
-                ? _buildCard(context, it.current)
-                : _buildNewCupboard(context),
-            it.moveNext()
-                ? _buildCard(context, it.current)
-                : _buildNewCupboard(context),
-          ],
-        ),
+    return GridView.extent(
+      maxCrossAxisExtent: 300,
+      padding: const EdgeInsets.all(4),
+      mainAxisSpacing: 2,
+      crossAxisSpacing: 2,
+      children: [
+        it.moveNext()
+            ? _buildCard(context, it.current)
+            : _buildNewCupboard(context),
+        it.moveNext()
+            ? _buildCard(context, it.current)
+            : _buildNewCupboard(context),
+        it.moveNext()
+            ? _buildCard(context, it.current)
+            : _buildNewCupboard(context),
+        it.moveNext()
+            ? _buildCard(context, it.current)
+            : _buildNewCupboard(context),
       ],
     );
   }
@@ -83,58 +75,56 @@ class Home extends StatelessWidget {
     final CupboardsService service = Provider.of<CupboardsService>(context);
 
     return CardSmall(
-        cta: Labels.of(context).getMessage("show_products"),
-        title: "${data.name}",
-        image: AssetImage("assets/img/${data.image}"),
-        tap: () {
-          service.selected = data;
-          Navigator.pushNamed(context, "/cupboard/${data.id}");
-        });
+      cta: Labels.of(context).getMessage("show_products"),
+      title: "${data.name}",
+      image: AssetImage("assets/img/${data.image}"),
+      tap: () {
+        service.selected = data;
+        Navigator.pushNamed(context, "/cupboard/${data.id}");
+      },
+    );
   }
 
   Widget _buildNewCupboard(BuildContext context) {
-    return Flexible(
-      child: Container(
-        height: 310,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: GestureDetector(
-            onTap: () {
-              print("funciona");
-
-              _buildDialog(context).show();
-            },
-            child: Card(
-              elevation: 0.4,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Flexible(
-                    flex: 2,
-                    child: Center(
+    return Container(
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () {
+            _buildDialog(context).show();
+          },
+          child: Card(
+            elevation: 0.4,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 2,
+                  child: Center(
+                    child: FittedBox(
                       child: Icon(
                         Icons.add_circle,
-                        size: 250,
+                        size: 200,
                         color: Colors.blue[300],
                       ),
                     ),
                   ),
-                  Flexible(
-                    flex: 1,
-                    child: Center(
-                      child: Text(
-                        "<Agregar Alacena>",
-                        style: TextStyle(
-                          color: ArgonColors.header,
-                          fontSize: 20,
-                        ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Center(
+                    child: Text(
+                      "<Agregar Alacena>",
+                      style: TextStyle(
+                        color: ArgonColors.header,
+                        fontSize: 20,
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           ),
         ),
