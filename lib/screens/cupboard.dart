@@ -3,7 +3,7 @@ import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:cupboard/models/Status.dart';
+import 'package:cupboard/models/status.dart';
 
 import 'package:cupboard/services/cupboards_service.dart';
 

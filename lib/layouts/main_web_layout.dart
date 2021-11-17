@@ -1,9 +1,12 @@
+import 'package:cupboard/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cupboard/constants/Theme.dart';
 import 'package:cupboard/locale/labels.dart';
 
 import 'package:cupboard/widgets/drawer.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class MainWebLayout extends StatelessWidget {
   final Widget child;
@@ -18,43 +21,19 @@ class MainWebLayout extends StatelessWidget {
   }
 
   Widget _buildOnlyBody(BuildContext context) {
-    final Labels labels = Labels.of(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: ArgonColors.bgColorScreen,
-      drawer: ArgonDrawer(currentPage: labels.getMessage(title)),
       body: _buildScaffoldBody(context),
       extendBody: true,
     );
   }
 
   Widget _buildFullBody(BuildContext context) {
-    final Labels labels = Labels.of(context);
-
     return Scaffold(
-/*         appBar: onlyBody
-        ? null
-        : Navbar(
-            transparent: false,
-            title: labels.getMessage(title),
-            searchBar: true,
-          ), */
-      appBar: NavBar2(),
       extendBodyBehindAppBar: true,
       backgroundColor: ArgonColors.bgColorScreen,
-      drawer: ArgonDrawer(currentPage: labels.getMessage(title)),
       body: _buildScaffoldBody(context),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
-        onPressed: () {},
-        child: const Icon(
-          Icons.edit,
-          color: Colors.white,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavBar(),
-      //extendBody: true,
     );
   }
 
@@ -62,20 +41,41 @@ class MainWebLayout extends StatelessWidget {
     return Stack(
       children: [
         _buildBackground(),
-        Center(
-          child: SizedBox(
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(
             width: 600,
-            child: this.onlyBody
-                ? Padding(
-                    padding: EdgeInsets.only(top: 100),
-                    child: child,
-                  )
-                : child,
+            child: this.onlyBody ? _wrapChildren() : _wrapScafold(context),
           ),
-        ),
+        ]),
       ],
     );
   }
+
+  Widget _wrapScafold(BuildContext context) {
+    final Labels labels = Labels.of(context);
+    return Scaffold(
+      appBar: NavBar2(title: labels.getMessage(title)),
+      backgroundColor: Colors.transparent,
+      extendBody: true,
+      //drawer: ArgonDrawer(currentPage: labels.getMessage(title)),
+      body: child,
+/*       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.red,
+        onPressed: () {},
+        child: const Icon(
+          Icons.edit,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, */
+      bottomNavigationBar: BottomNavBar(),
+    );
+  }
+
+  Widget _wrapChildren() => Padding(
+        padding: EdgeInsets.only(top: 100),
+        child: child,
+      );
 
   Widget _buildBackground() {
     return Container(
@@ -91,22 +91,29 @@ class MainWebLayout extends StatelessWidget {
 class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
   final double _prefferedHeight = AppBar().preferredSize.height * 0.75;
 
+  final String title;
+
+  NavBar2({Key? key, required this.title}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    AuthService service = Provider.of<AuthService>(context, listen: false);
+
     return AppBar(
       backgroundColor: Colors.transparent,
-      centerTitle: true,
-      //title: _buildTitle(context),
-/*       leading: IconButton(
-        icon: const Icon(Icons.search_outlined),
-        onPressed: () {
-          // handle the press
-        },
-      ), */
+      centerTitle: false,
+      title: _buildTitle(context),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_outlined),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(Icons.logout_outlined),
+        IconButton(
+          icon: Icon(Icons.logout_outlined),
+          onPressed: () {
+            service.signOut();
+            Navigator.of(context).pushNamed("/");
+          },
         )
       ],
     );
@@ -125,13 +132,11 @@ class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildTitle(BuildContext context) {
     return RichText(
       text: TextSpan(
-/*         style: GoogleFonts.ptSans(
-            fontSize: 15, color: Theme.of(context).textTheme.headline1!.color), */
+        style: GoogleFonts.ptSans(
+            fontSize: 25, color: Theme.of(context).textTheme.headline1!.color),
         children: <TextSpan>[
           TextSpan(
-              text: 'Google ',
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: 'Noticias'),
+              text: title, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );

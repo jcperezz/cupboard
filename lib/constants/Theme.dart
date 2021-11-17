@@ -1,6 +1,8 @@
 import 'dart:ui' show Color;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ArgonColors {
   static const Color black = Color(0xFF000000);
@@ -41,4 +43,10 @@ class ArgonColors {
 
   static const BorderRadius card_border =
       BorderRadius.all(Radius.circular(8.0));
+
+  static TextStyle get titleWhite =>
+      GoogleFonts.openSans(color: Colors.white, fontWeight: FontWeight.bold);
+
+  static TextStyle get titleCardWhite =>
+      GoogleFonts.openSans(color: Colors.white);
 }
