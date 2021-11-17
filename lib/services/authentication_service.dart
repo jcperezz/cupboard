@@ -1,4 +1,6 @@
 import 'package:cupboard/locale/labels.dart';
+import 'package:cupboard/domain/entities/user_data.dart';
+import 'package:cupboard/providers/firebase_database_provider.dart';
 import 'package:cupboard/providers/firebase_provider.dart';
 import 'package:cupboard/services/notifications_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,6 +66,7 @@ class AuthService extends ChangeNotifier {
           .auth
           .createUserWithEmailAndPassword(email: email, password: secret);
 
+      writeUserData(UserData.fromFirebase(userCredential.user!));
       NotificationsService.showSnackbar(label.getMessage("signup_user"));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -88,6 +91,14 @@ class AuthService extends ChangeNotifier {
     print("fin usuario registrado");
     isLoading = false;
     notifyListeners();
+  }
+
+  void writeUserData(UserData data) {
+    FireDbProvider()
+        .database
+        .child('users/' + data.uid)
+        .set(data.toMap())
+        .then((value) => {print("usuario creado")});
   }
 
   Future isAuth() async {

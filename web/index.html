@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -26,14 +27,16 @@
   <title>cupboard</title>
   <link rel="manifest" href="manifest.json">
 </head>
+
 <body>
 
   <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
 
   <script type="module">
- 
+
     // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBPqmjAba0QRHkGLr7SRX8SBl8rDGNGTN8",
@@ -44,7 +47,7 @@
       messagingSenderId: "1079318247904",
       appId: "1:1079318247904:web:d44e6909e446410aec5385"
     };
-  
+
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
   </script>
@@ -118,4 +121,5 @@
     }
   </script>
 </body>
+
 </html>
