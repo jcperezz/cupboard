@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 
 import 'package:cupboard/domain/entities/user_data.dart';
-import 'package:cupboard/domain/exeptions/persitence_exception.dart';
+import 'package:cupboard/domain/exceptions/persitence_exception.dart';
 import 'package:cupboard/domain/repositories/abstract_repository.dart';
 
 class FireUserRepository extends AbstractRepository<UserData> {

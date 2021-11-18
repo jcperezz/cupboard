@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cupboard/data/services/authentication_service.dart';
 import 'package:cupboard/data/services/fire_auth_service.dart';
 
-import 'package:cupboard/domain/exeptions/auth_exception.dart';
+import 'package:cupboard/domain/exceptions/auth_exception.dart';
 import 'package:cupboard/locale/labels.dart';
 
 import 'package:cupboard/services/notifications_service.dart';

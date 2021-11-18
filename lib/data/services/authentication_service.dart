@@ -6,8 +6,8 @@ import 'package:cupboard/data/services/fire_auth_service.dart';
 
 import 'package:cupboard/domain/entities/user_data.dart';
 
-import 'package:cupboard/domain/exeptions/auth_exception.dart';
-import 'package:cupboard/domain/exeptions/persitence_exception.dart';
+import 'package:cupboard/domain/exceptions/auth_exception.dart';
+import 'package:cupboard/domain/exceptions/persitence_exception.dart';
 
 class AuthenticationService {
   FireUserRepository repository = FireUserRepository();

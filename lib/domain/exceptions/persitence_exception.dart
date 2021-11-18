@@ -1,4 +1,4 @@
-import 'package:cupboard/domain/exeptions/abstract_exception.dart';
+import 'package:cupboard/domain/exceptions/abstract_exception.dart';
 
 class PersistenceException extends AbstractAppException {
   const PersistenceException(String label, [String? detail])
