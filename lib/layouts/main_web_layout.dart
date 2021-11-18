@@ -1,4 +1,4 @@
-import 'package:cupboard/services/authentication_service.dart';
+import 'package:cupboard/domain/notifiers/authentication_notifier.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cupboard/constants/Theme.dart';
@@ -97,7 +97,8 @@ class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthService service = Provider.of<AuthService>(context, listen: false);
+    AuthenticationNotifier service =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
 
     return AppBar(
       backgroundColor: Colors.transparent,

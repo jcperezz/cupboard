@@ -4,7 +4,7 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
 import 'package:cupboard/locale/labels.dart';
-import 'package:cupboard/models/cupboard.dart';
+import 'package:cupboard/domain/entities/cupboard.dart';
 
 import 'package:cupboard/services/cupboards_service.dart';
 

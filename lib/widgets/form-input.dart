@@ -13,6 +13,7 @@ class FormInput extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final TextCapitalization textCapitalization;
 
   FormInput({
     this.placeholder,
@@ -26,6 +27,7 @@ class FormInput extends StatelessWidget {
     this.validator,
     this.obscureText = false,
     this.keyboardType,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -39,6 +41,7 @@ class FormInput extends StatelessWidget {
         validator: validator,
         obscureText: obscureText,
         keyboardType: keyboardType,
+        textCapitalization: textCapitalization,
         style:
             TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
         textAlignVertical: TextAlignVertical(y: 0.6),

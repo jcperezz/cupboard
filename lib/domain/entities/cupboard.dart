@@ -1,15 +1,16 @@
 import 'dart:convert';
 
-class Cupboard {
+import 'package:cupboard/domain/entities/entity.dart';
+
+class Cupboard extends Entity {
   Cupboard({
     required this.count,
     required this.image,
     required this.name,
     this.stages,
-    this.id,
-  });
+    id,
+  }) : super(id: id);
 
-  String? id;
   String count;
   String image;
   String name;

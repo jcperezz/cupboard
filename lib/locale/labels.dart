@@ -37,6 +37,10 @@ class Labels {
       'save_label': 'SAVE',
       'show_products': 'Show Items',
       'select_image': 'Please select an image',
+      'new_category': 'Create category',
+      'view_options': 'View options',
+      'category_name': 'Category name',
+      'unknown_error': 'Unknown Error',
     },
     'es': {
       'title': 'Hola Mundo',
@@ -66,6 +70,10 @@ class Labels {
       'save_label': 'GUARDAR',
       'show_products': 'Ver elementos',
       'select_image': 'Seleccione una imagen',
+      'new_category': 'Crear categoría',
+      'view_options': 'Opciones de vista',
+      'category_name': 'Nombre Categoría',
+      'unknown_error': 'Error desconocido',
     },
   };
 

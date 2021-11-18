@@ -1,11 +1,12 @@
 import 'package:cupboard/constants/Theme.dart';
+import 'package:cupboard/domain/notifiers/category_notifier.dart';
 import 'package:cupboard/providers/firebase_database_provider.dart';
 import 'package:cupboard/widgets/input.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
 import 'package:cupboard/constants/icons.dart';
-import 'package:cupboard/models/category.dart';
+import 'package:cupboard/domain/entities/category.dart';
 import 'package:cupboard/services/categories_service.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -42,10 +43,10 @@ class TableScreen extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    final categoriesService =
-        Provider.of<CategoriesService>(context, listen: true);
+    final CategoryNotifier notifier =
+        Provider.of<CategoryNotifier>(context, listen: true);
 
-    Iterable<Category> categories = categoriesService.categories.values;
+    Iterable<Category> categories = notifier.categories.values;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

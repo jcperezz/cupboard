@@ -1,4 +1,4 @@
-import 'package:cupboard/models/cupboard.dart';
+import 'package:cupboard/domain/entities/cupboard.dart';
 import 'package:cupboard/providers/rest_api_provider.dart';
 import 'package:flutter/material.dart';
 

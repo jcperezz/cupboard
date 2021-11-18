@@ -1,6 +1,7 @@
+import 'package:cupboard/domain/notifiers/category_notifier.dart';
+import 'package:cupboard/domain/notifiers/product_notifier.dart';
 import 'package:cupboard/layouts/layout.dart';
-import 'package:cupboard/screens/products.dart';
-import 'package:cupboard/screens/table.dart';
+import 'package:cupboard/ui/screens/products/products_screen.dart';
 import 'package:fluro/fluro.dart';
 import 'package:provider/provider.dart';
 
@@ -13,14 +14,14 @@ import 'package:cupboard/screens/loading.dart';
 import 'package:cupboard/screens/login.dart';
 import 'package:cupboard/screens/register.dart';
 
-import 'package:cupboard/services/authentication_service.dart';
+import 'package:cupboard/domain/notifiers/authentication_notifier.dart';
 
 final homeHandler = Handler(handlerFunc: (context, params) {
-  final authProvider = Provider.of<AuthService>(context!);
+  final authProvider = Provider.of<AuthenticationNotifier>(context!);
 
   if (authProvider.isLoading) {
     return Layout(LoadingScreen(), title: "Loading", onlyBody: true);
-  } else if (authProvider.userIsAuth) {
+  } else if (authProvider.uid != null) {
     return Layout(HomeGrid(), title: "Cupboards");
   } else {
     return Layout(LoginScreen(), title: "Login", onlyBody: true);
@@ -49,7 +50,25 @@ final categoryHandler = Handler(handlerFunc: (context, params) {
 });
 
 final productsHandler = Handler(handlerFunc: (context, params) {
-  return Layout(TableScreen(), title: "Productos");
+  final authProvider = Provider.of<AuthenticationNotifier>(context!);
+
+  if (authProvider.isLoading) {
+    return Layout(LoadingScreen(), title: "Loading", onlyBody: true);
+  } else if (authProvider.uid != null) {
+    return Layout(
+        MultiProvider(
+          child: ProductsScreen(),
+          providers: [
+            ChangeNotifierProvider(
+                create: (_) => CategoryNotifier(authProvider.uid)),
+            ChangeNotifierProvider(
+                create: (_) => ProductNotifier(authProvider.uid)),
+          ],
+        ),
+        title: "Productos");
+  } else {
+    return Layout(LoginScreen(), title: "Login", onlyBody: true);
+  }
 });
 
 class RouterManager {

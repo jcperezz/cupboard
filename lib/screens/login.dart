@@ -9,7 +9,7 @@ import 'package:cupboard/constants/Theme.dart';
 import 'package:cupboard/constants/validators.dart';
 import 'package:cupboard/locale/labels.dart';
 
-import 'package:cupboard/services/authentication_service.dart';
+import 'package:cupboard/domain/notifiers/authentication_notifier.dart';
 
 //widgets
 import 'package:cupboard/widgets/button.dart';
@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildPageBody(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+    final authService = Provider.of<AuthenticationNotifier>(context);
     return LoadingOverlay(
       child: _buildSafeArea(context),
       isLoading: authService.isLoading,
@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildScaffoldBody(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+    final authService = Provider.of<AuthenticationNotifier>(context);
     return LoadingOverlay(
       child: Stack(
         children: [
@@ -180,7 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Padding _buildFormButtons(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+    final notifier = Provider.of<AuthenticationNotifier>(context);
+
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Center(
@@ -193,7 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: !_isSignUp
                   ? () {
                       if (_formKey.currentState!.validate()) {
-                        authService.signIn(context, _email, _secret);
+                        notifier.signInWithEmailAndPassword(
+                            context, _email, _secret);
                       }
                     }
                   : null,
@@ -205,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
               keyMessage: "signup_submit",
               onPressed: () {
                 if (_isSignUp && _formKey.currentState!.validate()) {
-                  authService.createUserWithEmailAndPassword(
+                  notifier.createUserWithEmailAndPassword(
                       context, _email, _secret);
                 } else {
                   setState(() {

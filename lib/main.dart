@@ -7,19 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:cupboard/routes/router.dart';
 
 import 'package:cupboard/locale/labels_delegate.dart';
-import 'package:cupboard/providers/local_storage_provider.dart';
-
-import 'package:cupboard/services/authentication_service.dart';
+import 'package:cupboard/domain/notifiers/authentication_notifier.dart';
 import 'package:cupboard/services/cupboards_service.dart';
 import 'package:cupboard/services/navigation_service.dart';
 import 'package:cupboard/services/notifications_service.dart';
 import 'package:cupboard/services/user_service.dart';
-import 'package:cupboard/services/categories_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SharedPreferencesProvider.init();
-
   RouterManager.configureRoutes();
   runApp(MyFirebaseApp());
 }
@@ -76,9 +71,9 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthService(), lazy: false),
+        ChangeNotifierProvider(
+            create: (_) => AuthenticationNotifier(), lazy: false),
         ChangeNotifierProvider(create: (_) => UserService(), lazy: false),
-        ChangeNotifierProvider(create: (_) => CategoriesService()),
         ChangeNotifierProvider(create: (_) => NavigationService()),
         ChangeNotifierProvider(create: (_) => CupboardsService()),
       ],

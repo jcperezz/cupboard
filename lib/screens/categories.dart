@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:cupboard/constants/icons.dart';
-import 'package:cupboard/models/category.dart';
+import 'package:cupboard/domain/entities/category.dart';
 import 'package:cupboard/services/categories_service.dart';
 import 'package:cupboard/widgets/drawer.dart';
 import 'package:flutter/material.dart';

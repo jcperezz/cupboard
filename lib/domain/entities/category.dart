@@ -1,13 +1,15 @@
 import 'dart:convert';
 
-class Category {
+import 'package:cupboard/domain/entities/entity.dart';
+
+class Category extends Entity {
   Category({
-    required this.id,
+    id,
+    owner,
     required this.icon,
     required this.name,
-  });
+  }) : super(id: id, owner: owner);
 
-  String id;
   String icon;
   String name;
 
