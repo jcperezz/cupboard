@@ -1,11 +1,10 @@
+import 'package:cupboard/domain/notifiers/cupboard_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:provider/provider.dart';
 
 import 'package:cupboard/domain/entities/status.dart';
-
-import 'package:cupboard/services/cupboards_service.dart';
 
 //widgets
 import 'package:cupboard/widgets/card-small.dart';
@@ -21,12 +20,12 @@ class CupboardScreen extends StatelessWidget {
   }
 
   Widget _buildPageBody(BuildContext context) {
-    final CupboardsService service =
-        Provider.of<CupboardsService>(context, listen: false);
+    final CupboardNotifier service =
+        Provider.of<CupboardNotifier>(context, listen: false);
 
-    if (service.selected == null) {
-      service.findById(uid!);
-    }
+    // if (service.selected == null) {
+    //   service.findById(uid!);
+    // }
 
     return LoadingOverlay(
       child: _buildSafeArea(context),

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:provider/provider.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
+import 'package:cupboard/domain/notifiers/cupboard_notifier.dart';
+
 import 'package:cupboard/locale/labels.dart';
 import 'package:cupboard/domain/entities/cupboard.dart';
-
-import 'package:cupboard/services/cupboards_service.dart';
 
 import 'package:cupboard/constants/images.dart';
 import 'package:cupboard/constants/validators.dart';
@@ -25,7 +27,8 @@ class HomeGrid extends StatelessWidget {
   }
 
   Widget _buildPageBody(BuildContext context) {
-    final CupboardsService service = Provider.of<CupboardsService>(context);
+    final service = Provider.of<CupboardNotifier>(context);
+
     return LoadingOverlay(
       child: _buildSafeArea(context),
       isLoading: service.isLoading,
@@ -45,7 +48,8 @@ class HomeGrid extends StatelessWidget {
   }
 
   Widget _buildGrid(BuildContext context) {
-    final CupboardsService service = Provider.of<CupboardsService>(context);
+    final service = Provider.of<CupboardNotifier>(context);
+
     Iterable<Cupboard> _cupboards = service.cupboards.values;
     Iterator<Cupboard> it = _cupboards.iterator;
 
@@ -72,26 +76,28 @@ class HomeGrid extends StatelessWidget {
   }
 
   Widget _buildCard(BuildContext context, Cupboard data) {
-    final CupboardsService service = Provider.of<CupboardsService>(context);
+    final service = Provider.of<CupboardNotifier>(context);
 
     return CardSmall(
       cta: Labels.of(context).getMessage("show_products"),
       title: "${data.name}",
       image: AssetImage("assets/img/${data.image}"),
       tap: () {
-        service.selected = data;
+        //service.selected = data;
         Navigator.pushNamed(context, "/cupboard/${data.id}");
       },
     );
   }
 
   Widget _buildNewCupboard(BuildContext context) {
+    final notifier = Provider.of<CupboardNotifier>(context);
+
     return Container(
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
-            _buildDialog(context).show();
+            _buildDialog(context, notifier).show();
           },
           child: Card(
             elevation: 0.4,
@@ -132,13 +138,13 @@ class HomeGrid extends StatelessWidget {
     );
   }
 
-  AwesomeDialog _buildDialog(BuildContext context) {
+  AwesomeDialog _buildDialog(BuildContext context, CupboardNotifier notifier) {
     return AwesomeDialog(
       context: context,
-      width: MediaQuery.of(context).size.width * 0.75,
+      width: MediaQuery.of(context).size.width * (kIsWeb ? 0.35 : 0.75),
       dialogType: DialogType.NO_HEADER,
       animType: AnimType.BOTTOMSLIDE,
-      body: _BodyDialog(),
+      body: _BodyDialog(notifier: notifier),
       // btnCancelOnPress: () {},
       // btnOkText: "GUARDAR",
       // btnCancelText: "CANCELAR",
@@ -149,8 +155,11 @@ class HomeGrid extends StatelessWidget {
 }
 
 class _BodyDialog extends StatefulWidget {
+  final CupboardNotifier notifier;
+
   const _BodyDialog({
     Key? key,
+    required this.notifier,
   }) : super(key: key);
 
   @override
@@ -217,8 +226,6 @@ class __BodyDialogState extends State<_BodyDialog> {
   }
 
   Widget _buildFormButtons(BuildContext context) {
-    final service = Provider.of<CupboardsService>(context);
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Center(
@@ -249,10 +256,10 @@ class __BodyDialogState extends State<_BodyDialog> {
                       .add(new Stage(statusEnum: "close_to_expire", total: 0));
                   cupboard.stages!
                       .add(new Stage(statusEnum: "expired", total: 0));
-                  service.add(cupboard);
-                }
 
-                Navigator.of(context).pop();
+                  widget.notifier.add(cupboard);
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],

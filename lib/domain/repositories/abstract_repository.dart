@@ -3,8 +3,8 @@ import 'package:cupboard/domain/entities/entity.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 abstract class AbstractRepository<T extends Entity> {
-  Future<Map<String, T>> getAll([String? uid]);
-  Future<T> getById(String id);
+  Future<Map<String, T>> getAll();
+  Future<T?> getById(String id);
   Future<void> add(T entity);
   Future<void> update(T entity);
   Future<void> remove(T entity);
@@ -13,7 +13,8 @@ abstract class AbstractRepository<T extends Entity> {
 
   Future<void> populate(String uid);
 
-  DatabaseReference getRoot([String? uid]) {
-    return FireDatabaseService().databaseByUser(uid).child(path);
-  }
+  DatabaseReference getCurrentUserPath([String? uid]) => getDb(uid).child(path);
+
+  DatabaseReference getDb([String? uid]) =>
+      FireDatabaseService().databaseByUser(uid);
 }

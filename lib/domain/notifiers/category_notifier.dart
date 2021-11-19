@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 class CategoryNotifier extends ChangeNotifier {
   final String? uid;
   late final FireCategoryRepository repository;
+
   bool isLoading = true;
   Map<String, Category> categories = Map();
 

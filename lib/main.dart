@@ -1,3 +1,5 @@
+import 'package:cupboard/data/services/shared_preferences_service.dart';
+import 'package:cupboard/domain/injectors/dependency_injector.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -8,13 +10,13 @@ import 'package:cupboard/routes/router.dart';
 
 import 'package:cupboard/locale/labels_delegate.dart';
 import 'package:cupboard/domain/notifiers/authentication_notifier.dart';
-import 'package:cupboard/services/cupboards_service.dart';
 import 'package:cupboard/services/navigation_service.dart';
 import 'package:cupboard/services/notifications_service.dart';
-import 'package:cupboard/services/user_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferencesService.instance;
+  DependencyInjector().regist();
   RouterManager.configureRoutes();
   runApp(MyFirebaseApp());
 }
@@ -73,9 +75,7 @@ class AppState extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
             create: (_) => AuthenticationNotifier(), lazy: false),
-        ChangeNotifierProvider(create: (_) => UserService(), lazy: false),
         ChangeNotifierProvider(create: (_) => NavigationService()),
-        ChangeNotifierProvider(create: (_) => CupboardsService()),
       ],
       child: MyApp(),
     );

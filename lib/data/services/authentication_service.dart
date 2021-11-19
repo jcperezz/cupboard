@@ -1,3 +1,4 @@
+import 'package:cupboard/data/services/shared_preferences_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:cupboard/data/repositories/user/fire_user_repository.dart';
@@ -25,6 +26,9 @@ class AuthenticationService {
       if (user != null) {
         UserData userData = await repository.getById(user.uid);
         print("usuario autenticado");
+
+        SharedPreferencesService.instance
+            .setString("current-uid-user", userData.uid);
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -62,6 +66,8 @@ class AuthenticationService {
         entity.email = email;
 
         await repository.add(entity);
+        SharedPreferencesService.instance
+            .setString("current-uid-user", entity.uid);
         print("usuario creado");
       }
     } on FirebaseAuthException catch (e) {

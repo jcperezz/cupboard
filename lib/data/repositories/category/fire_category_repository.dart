@@ -5,14 +5,14 @@ import 'package:firebase_database/firebase_database.dart';
 class FireCategoryRepository extends AbstractRepository<Category> {
   @override
   Future<void> add(Category entity) async {
-    return await getRoot(entity.owner).push().set(entity.toMap());
+    return await getCurrentUserPath(entity.owner).push().set(entity.toMap());
   }
 
   @override
   Future<Map<String, Category>> getAll([String? uid]) async {
     Map<String, Category> categories = Map();
 
-    DataSnapshot snapshot = await getRoot(uid).get();
+    DataSnapshot snapshot = await getCurrentUserPath(uid).get();
 
     if (snapshot != null && snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;

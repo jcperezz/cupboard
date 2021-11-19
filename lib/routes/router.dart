@@ -1,4 +1,7 @@
+import 'package:cupboard/data/repositories/cupboard/fire_cupboard_repository.dart';
+import 'package:cupboard/domain/injectors/dependency_injector.dart';
 import 'package:cupboard/domain/notifiers/category_notifier.dart';
+import 'package:cupboard/domain/notifiers/cupboard_notifier.dart';
 import 'package:cupboard/domain/notifiers/product_notifier.dart';
 import 'package:cupboard/layouts/layout.dart';
 import 'package:cupboard/ui/screens/products/products_screen.dart';
@@ -9,7 +12,6 @@ import 'package:cupboard/screens/categories.dart';
 import 'package:cupboard/screens/category.dart';
 import 'package:cupboard/screens/cupboard.dart';
 import 'package:cupboard/screens/home-grid.dart';
-import 'package:cupboard/screens/home.dart';
 import 'package:cupboard/screens/loading.dart';
 import 'package:cupboard/screens/login.dart';
 import 'package:cupboard/screens/register.dart';
@@ -22,7 +24,15 @@ final homeHandler = Handler(handlerFunc: (context, params) {
   if (authProvider.isLoading) {
     return Layout(LoadingScreen(), title: "Loading", onlyBody: true);
   } else if (authProvider.uid != null) {
-    return Layout(HomeGrid(), title: "Cupboards");
+    return Layout(
+        MultiProvider(
+          child: HomeGrid(),
+          providers: [
+            ChangeNotifierProvider.value(
+                value: DependencyInjector().get<CupboardNotifier>()),
+          ],
+        ),
+        title: "Cupboards");
   } else {
     return Layout(LoginScreen(), title: "Login", onlyBody: true);
   }
@@ -34,10 +44,19 @@ final registerHandler = Handler(handlerFunc: (context, params) {
 
 final cupboardHandler = Handler(handlerFunc: (context, params) {
   if (params['uid']?.first != null) {
-    return Layout(CupboardScreen(uid: params['uid']!.first),
+    return Layout(
+        MultiProvider(
+          child: CupboardScreen(uid: params['uid']!.first),
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => CupboardNotifier(
+                  DependencyInjector().get<FireCupboardRepository>()),
+            ),
+          ],
+        ),
         title: "Cupboards");
   } else {
-    return Layout(Home(), title: "Cupboards");
+    return Layout(HomeGrid(), title: "Cupboards");
   }
 });
 

@@ -4,12 +4,12 @@ import 'package:cupboard/domain/entities/entity.dart';
 
 class UserData extends Entity {
   UserData({
-    this.cupboardsId,
+    this.cupboards,
     this.email,
     required this.uid,
   }) : super(id: uid);
 
-  CupboardsId? cupboardsId;
+  List<UserCupboard>? cupboards;
   String? email;
   String uid;
 
@@ -17,41 +17,59 @@ class UserData extends Entity {
 
   String toJson() => json.encode(toMap());
 
-  factory UserData.fromMap(Map<String, dynamic> json) => UserData(
-        cupboardsId: CupboardsId.fromMap(json["cupboards"]),
-        email: json["email"],
-        uid: json["uid"],
-      );
+  factory UserData.fromMap(Map<String, dynamic> json) {
+    List<UserCupboard> list = [];
+
+    if (json["cupboards"] != null) {
+      Map<String, dynamic> result = json["cupboards"];
+
+      print("$result");
+
+      result.forEach((key, value) {
+        list.add(UserCupboard.fromMap(value, id: key));
+      });
+    }
+
+    return UserData(
+      cupboards: json["cupboards"] != null ? list : null,
+      email: json["email"],
+      uid: json["uid"],
+    );
+  }
 
   Map<String, dynamic> toMap() => {
-        "cupboards": cupboardsId != null ? cupboardsId!.toMap() : null,
+        "cupboards":
+            cupboards != null ? cupboards!.map((e) => e.toMap()) : null,
         "email": email,
         "uid": uid,
       };
 }
 
-class CupboardsId {
-  CupboardsId({
-    required this.id,
-    required this.cupboards,
-  });
+class UserCupboard extends Entity {
+  UserCupboard({
+    String? id,
+    String? owner,
+    required this.key,
+    required this.name,
+  }) : super(id: id, owner: owner);
 
-  String id;
-  List<String> cupboards;
+  String key;
+  String name;
 
-  factory CupboardsId.fromJson(String str) =>
-      CupboardsId.fromMap(json.decode(str));
+  factory UserCupboard.fromJson(String str) =>
+      UserCupboard.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory CupboardsId.fromMap(Map<String, dynamic> json) {
-    final String id = json.keys.first;
-    final cupboards = List<String>.from(json[id].map((x) => x));
-
-    return CupboardsId(id: id, cupboards: cupboards);
-  }
+  factory UserCupboard.fromMap(Map<String, dynamic> json, {String? id}) =>
+      UserCupboard(
+        key: json["key"],
+        name: json["name"],
+        id: id,
+      );
 
   Map<String, dynamic> toMap() => {
-        id: List<dynamic>.from(cupboards.map((x) => x)),
+        "key": key,
+        "name": name,
       };
 }

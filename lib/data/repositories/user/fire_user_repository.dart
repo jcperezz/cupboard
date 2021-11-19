@@ -7,14 +7,14 @@ import 'package:cupboard/domain/repositories/abstract_repository.dart';
 class FireUserRepository extends AbstractRepository<UserData> {
   @override
   Future<void> add(UserData entity) async {
-    return await getRoot(entity.owner).push().set(entity.toMap());
+    return await getDb(entity.uid).set(entity.toMap());
   }
 
   @override
-  Future<Map<String, UserData>> getAll([String? uid]) async {
+  Future<Map<String, UserData>> getAll() async {
     Map<String, UserData> list = Map();
 
-    DataSnapshot snapshot = await getRoot(uid).get();
+    DataSnapshot snapshot = await getDb().get();
 
     if (snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;
@@ -28,11 +28,12 @@ class FireUserRepository extends AbstractRepository<UserData> {
 
   @override
   Future<UserData> getById(String id) async {
-    DataSnapshot snapshot = await getRoot(id).get();
+    DataSnapshot snapshot = await getDb(id).get();
 
     if (snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;
-      return UserData.fromMap(response);
+      UserData user = UserData.fromMap(response);
+      return user;
     }
 
     throw PersistenceException("no_user_found");
