@@ -4,12 +4,14 @@ import 'package:flutter/cupertino.dart';
 
 class CategoryNotifier extends ChangeNotifier {
   final String? uid;
+  final String? cupboardUid;
+
   late final FireCategoryRepository repository;
 
   bool isLoading = true;
   Map<String, Category> categories = Map();
 
-  CategoryNotifier(this.uid) {
+  CategoryNotifier(this.uid, this.cupboardUid) {
     repository = FireCategoryRepository();
     getCategories();
   }
@@ -17,7 +19,13 @@ class CategoryNotifier extends ChangeNotifier {
   Future<void> getCategories() async {
     isLoading = true;
     notifyListeners();
-    categories = await repository.getAll(uid);
+
+    Map<String, Category> generalCategories = await repository.getAll();
+    Map<String, Category> categoriesByUser = await repository.getAll(uid);
+
+    categories.addAll(generalCategories);
+    categories.addAll(categoriesByUser);
+
     isLoading = false;
     notifyListeners();
   }

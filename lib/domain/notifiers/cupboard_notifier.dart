@@ -1,9 +1,9 @@
-import 'package:cupboard/data/repositories/cupboard/fire_cupboard_repository.dart';
 import 'package:cupboard/domain/entities/cupboard.dart';
+import 'package:cupboard/domain/repositories/abstract_repository.dart';
 import 'package:flutter/material.dart';
 
 class CupboardNotifier extends ChangeNotifier {
-  late final FireCupboardRepository repository;
+  late final AbstractRepository<Cupboard> repository;
 
   bool isLoading = true;
   Map<String, Cupboard> cupboards = Map();

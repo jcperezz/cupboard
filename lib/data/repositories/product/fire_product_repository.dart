@@ -9,12 +9,13 @@ class FireProductRepository extends AbstractRepository<Product> {
   }
 
   @override
-  Future<Map<String, Product>> getAll([String? uid]) async {
+  Future<Map<String, Product>> getAll(
+      [String? userUid, String? cupboardUid]) async {
     Map<String, Product> list = Map();
 
-    DataSnapshot snapshot = await getCurrentUserPath(uid).get();
+    DataSnapshot snapshot = await getCurrentUserPath(userUid).get();
 
-    if (snapshot != null && snapshot.value != null) {
+    if (snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;
       list = response.map(
           (key, value) => new MapEntry(key, Product.fromMap(value, id: key)));

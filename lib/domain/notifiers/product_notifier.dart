@@ -3,13 +3,15 @@ import 'package:cupboard/domain/entities/product.dart';
 import 'package:flutter/material.dart';
 
 class ProductNotifier extends ChangeNotifier {
-  final String? uid;
+  final String? userUid;
+  final String? cupboardUid;
+
   late final FireProductRepository repository;
   bool isLoading = true;
   Map<String, Product> products = Map();
   Map<String, List<Product>> productsByCategory = Map();
 
-  ProductNotifier(this.uid) {
+  ProductNotifier(this.userUid, this.cupboardUid) {
     repository = FireProductRepository();
     getAll();
   }
@@ -17,7 +19,12 @@ class ProductNotifier extends ChangeNotifier {
   Future<void> getAll() async {
     isLoading = true;
     notifyListeners();
-    products = await repository.getAll(uid);
+    Map<String, Product> generalProducts = await repository.getAll();
+    Map<String, Product> productsByUser =
+        await repository.getAll(userUid, cupboardUid);
+
+    products.addAll(generalProducts);
+    products.addAll(productsByUser);
 
     products.forEach((key, value) {
       String category = value.category;
@@ -28,9 +35,6 @@ class ProductNotifier extends ChangeNotifier {
 
       productsByCategory[category]!.add(value);
     });
-
-    print("$products");
-    print("$productsByCategory");
 
     isLoading = false;
     notifyListeners();

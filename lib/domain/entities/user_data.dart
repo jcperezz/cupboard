@@ -23,7 +23,7 @@ class UserData extends Entity {
     if (json["cupboards"] != null) {
       Map<String, dynamic> result = json["cupboards"];
 
-      print("$result");
+      print("cupboards userdata $result");
 
       result.forEach((key, value) {
         list.add(UserCupboard.fromMap(value, id: key));

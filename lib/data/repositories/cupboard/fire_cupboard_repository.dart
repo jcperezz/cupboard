@@ -1,11 +1,11 @@
-import 'package:cupboard/data/repositories/user/fire_user_repository.dart';
-import 'package:cupboard/data/services/shared_preferences_service.dart';
 import 'package:firebase_database/firebase_database.dart';
+
+import 'package:cupboard/data/repositories/user/fire_user_repository.dart';
+
+import 'package:cupboard/data/services/shared_preferences_service.dart';
 
 import 'package:cupboard/domain/entities/cupboard.dart';
 import 'package:cupboard/domain/entities/user_data.dart';
-
-import 'package:cupboard/domain/injectors/dependency_injector.dart';
 
 import 'package:cupboard/domain/repositories/abstract_repository.dart';
 
@@ -29,9 +29,11 @@ class FireCupboardRepository extends AbstractRepository<Cupboard> {
     String? uid =
         await SharedPreferencesService.instance.getString("current-uid-user");
 
-    UserData user = await FireUserRepository().getById(uid!);
-
     Map<String, Cupboard> list = Map();
+
+    if (uid == null) return list;
+
+    UserData user = await FireUserRepository().getById(uid);
 
     if (user.cupboards != null) {
       for (var userCupboard in user.cupboards!) {
@@ -59,7 +61,6 @@ class FireCupboardRepository extends AbstractRepository<Cupboard> {
   }
 
   @override
-  // TODO: implement path
   String get path => "cupboards";
 
   @override

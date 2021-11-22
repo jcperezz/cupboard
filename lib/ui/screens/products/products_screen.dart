@@ -22,7 +22,9 @@ import 'package:cupboard/domain/notifiers/category_notifier.dart';
 import 'package:cupboard/domain/entities/category.dart';
 
 class ProductsScreen extends StatelessWidget {
-  const ProductsScreen({Key? key}) : super(key: key);
+  final String cupboardId;
+
+  const ProductsScreen({Key? key, required this.cupboardId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class ProductsScreen extends StatelessWidget {
       alignment: AlignmentDirectional.bottomEnd,
       children: [
         _buildSafeArea(context),
-        SearchBar(),
+        //SearchBar(),
       ],
     );
   }
@@ -242,25 +244,24 @@ class GridCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("$products");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: categories.map((e) => _buildGridProducts(e)).toList(),
+      children: [...categories.map((e) => _buildGridProducts(e)).toList()],
     );
   }
 
   Widget _buildGridProducts(Category category) {
+    if (products[category.id] == null) return Container();
+
     return Column(
       children: [
         _buildCategoryTitle(category.name),
-        if (products[category.id] != null)
-          GridViewNoViewPort(
-            crossAxisCount: 5,
-            childHeight: 100,
-            children: products[category.id]!
-                .map((e) => _buildGridTileList(e))
-                .toList(),
-          ),
+        GridViewNoViewPort(
+          crossAxisCount: 5,
+          childHeight: 100,
+          children:
+              products[category.id]!.map((e) => _buildGridTileList(e)).toList(),
+        ),
       ],
     );
   }
@@ -281,32 +282,40 @@ class GridCategories extends StatelessWidget {
   }
 
   Widget _buildGridTileList(Product product) {
-    return Card(
-      margin: EdgeInsets.all(1),
-      color: Colors.red,
-      elevation: 0.4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-      ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: CustomPaint(
-                    size: Size(40, 40),
-                    painter: MyPainter(product.name.substring(0, 2)),
-                  ),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        child: Card(
+          margin: EdgeInsets.all(1),
+          color: Colors.red,
+          elevation: 0.4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: CustomPaint(
+                        size: Size(40, 40),
+                        painter: MyPainter(product.name.substring(0, 2)),
+                        isComplex: true,
+                        willChange: false,
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child:
+                          Text(product.name, style: ArgonColors.titleCardWhite),
+                    )
+                  ],
                 ),
-                Expanded(child: Container()),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(product.name, style: ArgonColors.titleCardWhite),
-                )
-              ],
+              ),
             ),
           ),
         ),
@@ -417,7 +426,7 @@ class MyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final textStyle = GoogleFonts.londrinaShadow(
       color: Colors.white,
-      fontSize: 70,
+      fontSize: 40,
     );
 
     final textSpan = TextSpan(
