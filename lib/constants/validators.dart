@@ -1,44 +1,49 @@
+import 'package:cupboard/locale/labels.dart';
+import 'package:flutter/cupertino.dart';
+
 class Validator<T> {
   bool _isvalid = true;
   String msg;
   T? value;
+  BuildContext context;
 
   static final RegExp _emailRegExp = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9\-\_]+(\.[a-zA-Z]+)*$");
 
-  Validator(this.value) : msg = "";
-  Validator._(this.value, this.msg);
+  Validator(this.context, this.value) : msg = "";
+  Validator._(this.context, this.value, this.msg);
 
-  Validator<T> mandatory({String msg = "El campo es obligatorio"}) {
+  Validator<T> mandatory({String msg = "validator_field_mandatory"}) {
     if (!_isvalid) return this;
     _isvalid = value != null && value.toString().isNotEmpty;
-    this.msg = msg;
+    this.msg = Labels.of(context).getMessage(msg);
     return this;
   }
 
   Validator<T> equals({required String msg, required T target}) {
     if (!_isvalid) return this;
     _isvalid = value.toString().compareTo(target.toString()) == 0;
-    this.msg = msg;
+    this.msg = Labels.of(context).getMessage(msg);
     return this;
   }
 
   Validator<T> length(
-      {String msg = r'Debe tener una longitud entre $min y $max ',
-      int min = 0,
-      int max = -1}) {
+      {String msg = "validator_length_min_max", int min = 0, int max = -1}) {
     if (!_isvalid) return this;
     _isvalid = value != null &&
         value.toString().length >= min &&
         value.toString().length <= max;
-    this.msg = msg.replaceAll(r'$min', "$min").replaceAll(r'$max', "$max");
+
+    this.msg = Labels.of(context).getMessage(msg, [min, max]);
     return this;
   }
 
-  Validator<T> isEmail({String msg = "No es un email válido"}) {
+  Validator<T> isEmail({String msg = "validator_invalid_email"}) {
     if (!_isvalid) return this;
+
     _isvalid = _emailRegExp.hasMatch(value.toString().toLowerCase());
-    this.msg = msg;
+
+    this.msg = Labels.of(context).getMessage(msg);
     return this;
   }
 

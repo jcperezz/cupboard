@@ -41,6 +41,18 @@ class Labels {
       'view_options': 'View options',
       'category_name': 'Category name',
       'unknown_error': 'Unknown Error',
+      'add_product': 'Add Product',
+      'search_label': 'What are you looking for?',
+      'quantity_label': 'Quantity',
+      'category_label': 'Category',
+      'category_mandatory': 'Please select a category',
+      'validator_field_mandatory': 'The field is mandatory',
+      'validator_length_min_max': r'Debe tener una longitud entre $0 y $1',
+      'validator_invalid_email': 'No es un email válido',
+      'quantity_mandatory': 'Please enter a quantity',
+      'expiration_date_label': 'Expiration Date',
+      'expiration_date_mandatory': 'Please select a date',
+      'expiration_abreviation': 'Exp.',
     },
     'es': {
       'title': 'Hola Mundo',
@@ -74,6 +86,18 @@ class Labels {
       'view_options': 'Opciones de vista',
       'category_name': 'Nombre Categoría',
       'unknown_error': 'Error desconocido',
+      'add_product': 'Agregar Producto',
+      'search_label': '¿Qué estás buscando?',
+      'quantity_label': 'Cantidad',
+      'category_label': 'Categoría',
+      'category_mandatory': 'Seleccione una categoría',
+      'validator_field_mandatory': 'Campo obligotario',
+      'validator_length_min_max': r'Debe tener una longitud entre $0 y $1',
+      'validator_invalid_email': 'No es un email válido',
+      'quantity_mandatory': 'Ingrese una cantidad',
+      'expiration_date_label': 'Fecha Expiración',
+      'expiration_date_mandatory': 'Seleccione una fecha',
+      'expiration_abreviation': 'Exp.',
     },
   };
 
@@ -81,26 +105,29 @@ class Labels {
 
   static String interpolate(String message, [List<dynamic> args = const []]) {
     for (var i = 0; i < args.length; i++) {
-      message = message.replaceAll(r'$' + i.toString(), args[i]);
+      message = message.replaceAll(r'$' + i.toString(), args[i].toString());
     }
 
     return message;
   }
 
-  String getMessage(String? key) {
+  String getMessage(String? key, [List<dynamic> args = const []]) {
     if (key == null) {
       return "";
     }
 
     final localizedValues = _localizedValues[locale.languageCode];
+    String? msg = key;
 
     if (localizedValues != null) {
-      var msg = localizedValues[key];
-      return msg ?? key;
+      msg = localizedValues[key];
+      msg = msg ?? key;
     } else {
-      return key;
+      msg = key;
     }
+
+    return interpolate(msg, args);
   }
 
-  String get title => _localizedValues[locale.languageCode]!['title']!;
+  String get title => getMessage('title');
 }

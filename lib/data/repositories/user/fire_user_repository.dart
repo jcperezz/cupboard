@@ -1,19 +1,20 @@
+import 'package:cupboard/domain/repositories/abstract_fire_repository.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'package:cupboard/domain/entities/user_data.dart';
 import 'package:cupboard/domain/exceptions/persitence_exception.dart';
-import 'package:cupboard/domain/repositories/abstract_repository.dart';
 
-class FireUserRepository extends AbstractRepository<UserData> {
+class FireUserDataRepository extends AbstractFireRepository<UserData> {
   @override
-  Future<void> add(UserData entity) async {
-    return await getDb(entity.uid).set(entity.toMap());
+  Future<String> add(UserData entity) async {
+    DatabaseReference db = getDb(entity.uid);
+    await db.set(entity.toMap());
+    return db.key;
   }
 
   @override
-  Future<Map<String, UserData>> getAll() async {
+  Future<Map<String, UserData>> getAll([String? userUid]) async {
     Map<String, UserData> list = Map();
-
     DataSnapshot snapshot = await getDb().get();
 
     if (snapshot.value != null) {

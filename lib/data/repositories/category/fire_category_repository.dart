@@ -1,27 +1,31 @@
 import 'package:cupboard/domain/entities/category.dart';
-import 'package:cupboard/domain/repositories/abstract_repository.dart';
+import 'package:cupboard/domain/repositories/abstract_fire_repository.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class FireCategoryRepository extends AbstractRepository<Category> {
+class FireCategoryRepository extends AbstractFireRepository<Category> {
   @override
-  Future<void> add(Category entity, [String? cupboardId]) async {
-    return await getDb(entity.owner)
-        .child("cupboards")
-        .child(path)
+  Future<String> add(Category entity) async {
+    final DatabaseReference db = getDb();
+    await db
+        .child("cupboards/${entity.cupboardUid}")
+        .child(entity.id != null ? "$path/${entity.id}" : path)
         .push()
         .set(entity.toMap());
+    return db.key;
   }
 
   @override
-  Future<Map<String, Category>> getAll([String? uid]) async {
+  Future<Map<String, Category>> getAll([String? cupboardUid]) async {
     Map<String, Category> categories = Map();
 
-    DataSnapshot snapshot = await getCurrentUserPath(uid).get();
+    DataSnapshot snapshot = cupboardUid == null
+        ? await getDb().child(path).get()
+        : await getDb().child("cupboards/$cupboardUid").child(path).get();
 
     if (snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;
-      categories = response.map((key, value) => new MapEntry(key,
-          new Category(id: key, icon: value["icon"], name: value["name"])));
+      categories = response
+          .map((key, value) => new MapEntry(key, Category.fromMap(key, value)));
     }
 
     return categories;
@@ -49,12 +53,13 @@ class FireCategoryRepository extends AbstractRepository<Category> {
   String get path => "categories";
 
   @override
-  Future<void> populate(String uid) async {
-    Map<String, Category> categories = await getAll(null);
+  Future<void> populate(String parentUid) async {
+    DataSnapshot snapshot = await getDb().child(path).get();
+    final DatabaseReference db = getDb().child("cupboards/$parentUid");
 
-    categories.forEach((key, value) {
-      value.owner = uid;
-      add(value);
-    });
+    if (snapshot.value != null) {
+      Map<String, dynamic> response = snapshot.value;
+      db.child(path).set(response);
+    }
   }
 }

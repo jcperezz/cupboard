@@ -3,6 +3,7 @@ import 'dart:ui' show Color;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class ArgonColors {
   static const Color black = Color(0xFF000000);
@@ -49,4 +50,9 @@ class ArgonColors {
 
   static TextStyle get titleCardWhite =>
       GoogleFonts.openSans(color: Colors.white);
+
+  static TextStyle get titleCardProducts =>
+      GoogleFonts.openSans(color: Colors.white, fontWeight: FontWeight.bold);
+
+  static DateFormat DATE_FORMAT_DB = DateFormat("d/M/yy");
 }

@@ -5,28 +5,34 @@ class Input extends StatelessWidget {
   final String? placeholder;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
-  final Function? onTap;
-  final Function(String)? onChanged;
+  final GestureTapCallback? onTap;
+  final ValueChanged<String>? onChanged;
   final TextEditingController? controller;
   final bool autofocus;
   final Color borderColor;
+  final TextInputType? keyboardType;
+  final TextCapitalization textCapitalization;
 
-  Input(
-      {this.placeholder,
-      this.suffixIcon,
-      this.prefixIcon,
-      this.onTap,
-      this.onChanged,
-      this.autofocus = false,
-      this.borderColor = ArgonColors.border,
-      this.controller});
+  Input({
+    this.placeholder,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.onTap,
+    this.onChanged,
+    this.autofocus = false,
+    this.borderColor = ArgonColors.border,
+    this.controller,
+    this.keyboardType,
+    this.textCapitalization = TextCapitalization.none,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
         cursorColor: ArgonColors.muted,
-        onTap: () => onTap,
-        onChanged: (String arg) => onChanged,
+        keyboardType: keyboardType,
+        onTap: onTap,
+        onChanged: onChanged,
         controller: controller,
         autofocus: autofocus,
         style:

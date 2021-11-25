@@ -20,7 +20,11 @@ import 'package:cupboard/widgets/card-small.dart';
 import 'package:cupboard/widgets/form-input.dart';
 import 'package:cupboard/widgets/image-slider.dart';
 
-class HomeGrid extends StatelessWidget {
+class CupboardsScreen extends StatelessWidget {
+  final String userUid;
+
+  const CupboardsScreen({Key? key, required this.userUid}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return _buildPageBody(context);
@@ -84,7 +88,7 @@ class HomeGrid extends StatelessWidget {
       image: AssetImage("assets/img/${data.image}"),
       tap: () {
         //service.selected = data;
-        Navigator.pushNamed(context, "/cupboard/${data.id}");
+        Navigator.of(context).pushNamed("/inventory/${data.id}");
       },
     );
   }
@@ -144,7 +148,8 @@ class HomeGrid extends StatelessWidget {
       width: MediaQuery.of(context).size.width * (kIsWeb ? 0.35 : 0.75),
       dialogType: DialogType.NO_HEADER,
       animType: AnimType.BOTTOMSLIDE,
-      body: _BodyDialog(notifier: notifier),
+      dialogBackgroundColor: Colors.white,
+      body: _BodyDialog(notifier: notifier, userUid: userUid),
       // btnCancelOnPress: () {},
       // btnOkText: "GUARDAR",
       // btnCancelText: "CANCELAR",
@@ -156,10 +161,12 @@ class HomeGrid extends StatelessWidget {
 
 class _BodyDialog extends StatefulWidget {
   final CupboardNotifier notifier;
+  final String userUid;
 
   const _BodyDialog({
     Key? key,
     required this.notifier,
+    required this.userUid,
   }) : super(key: key);
 
   @override
@@ -187,7 +194,7 @@ class __BodyDialogState extends State<_BodyDialog> {
         ));
   }
 
-  ImagesSlider _buildSelectImage(BuildContext context) {
+  Widget _buildSelectImage(BuildContext context) {
     return ImagesSlider(
       images: MyImages.cupboard_images,
       title: Labels.of(context).getMessage("select_image"),
@@ -211,8 +218,8 @@ class __BodyDialogState extends State<_BodyDialog> {
       placeholder: Labels.of(context).getMessage('cupboard_name'),
       keyboardType: TextInputType.name,
       prefixIcon: Icon(Icons.account_balance_wallet_rounded),
-      validator: (value) => Validator<String>(value)
-          .mandatory(msg: Labels.of(context).getMessage('mandatory_name'))
+      validator: (value) => Validator<String>(context, value)
+          .mandatory(msg: 'mandatory_name')
           .length(min: 4, max: 32)
           .validate(),
     ));
@@ -244,18 +251,12 @@ class __BodyDialogState extends State<_BodyDialog> {
               keyMessage: "save_label",
               onPressed: () {
                 if (_formKey.currentState!.validate() && _image != null) {
-                  final Cupboard cupboard =
-                      new Cupboard(count: "0", image: _image!, name: _name!);
-
-                  cupboard.stages = [];
-                  cupboard.stages!
-                      .add(new Stage(statusEnum: "pending", total: 0));
-                  cupboard.stages!
-                      .add(new Stage(statusEnum: "avalaible", total: 0));
-                  cupboard.stages!
-                      .add(new Stage(statusEnum: "close_to_expire", total: 0));
-                  cupboard.stages!
-                      .add(new Stage(statusEnum: "expired", total: 0));
+                  final Cupboard cupboard = new Cupboard(
+                    count: 0,
+                    image: _image!,
+                    name: _name!,
+                    owner: widget.userUid,
+                  );
 
                   widget.notifier.add(cupboard);
                   Navigator.of(context).pop();

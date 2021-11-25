@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cupboard/constants/Theme.dart';
+import 'package:flutter/services.dart';
 
 class FormInput extends StatelessWidget {
   final String? placeholder;
@@ -14,6 +15,9 @@ class FormInput extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextCapitalization textCapitalization;
+  final bool readOnly;
+  final String? initialValue;
+  final List<TextInputFormatter>? inputFormatters;
 
   FormInput({
     this.placeholder,
@@ -28,6 +32,9 @@ class FormInput extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.textCapitalization = TextCapitalization.none,
+    this.readOnly = false,
+    this.initialValue,
+    this.inputFormatters,
   });
 
   @override
@@ -42,6 +49,9 @@ class FormInput extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         textCapitalization: textCapitalization,
+        readOnly: readOnly,
+        initialValue: initialValue,
+        inputFormatters: inputFormatters,
         style:
             TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
         textAlignVertical: TextAlignVertical(y: 0.6),

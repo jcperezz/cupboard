@@ -1,8 +1,8 @@
-import 'package:cupboard/layouts/main_layout.dart';
-import 'package:cupboard/layouts/main_web_layout.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/foundation.dart' show kIsWeb;
+
+import 'package:cupboard/ui/layouts/main_layout.dart';
+import 'package:cupboard/ui/layouts/main_web_layout.dart';
 
 class Layout extends StatelessWidget {
   final Widget child;

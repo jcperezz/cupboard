@@ -1,25 +1,26 @@
-import 'package:cupboard/domain/entities/product.dart';
 import 'package:flutter/material.dart';
 
+import 'package:cupboard/domain/entities/product_item.dart';
 import 'package:cupboard/domain/repositories/abstract_repository.dart';
 
-class ProductNotifier extends ChangeNotifier {
+class ProductItemNotifier extends ChangeNotifier {
   final String? userUid;
   final String? cupboardUid;
-  late final AbstractRepository<Product> repository;
+  late final AbstractRepository<ProductItem> productItemRepository;
 
   bool isLoading = true;
-  Map<String, Product> products = Map();
-  Map<String, List<Product>> productsByCategory = Map();
+  Map<String, ProductItem> products = Map();
+  Map<String, List<ProductItem>> productsByCategory = Map();
 
-  ProductNotifier(this.userUid, this.cupboardUid, this.repository) {
+  ProductItemNotifier(
+      this.userUid, this.cupboardUid, this.productItemRepository) {
     getAll();
   }
 
   Future<void> getAll() async {
     isLoading = true;
     notifyListeners();
-    products = await repository.getAll(userUid);
+    products = await productItemRepository.getAll(userUid);
 
     products.forEach((key, value) {
       String category = value.category!;
@@ -35,11 +36,11 @@ class ProductNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> add(Product product) async {
+  Future<void> add(ProductItem product) async {
     isLoading = true;
     notifyListeners();
 
-    repository.add(product);
+    productItemRepository.add(product);
 
     isLoading = false;
     notifyListeners();

@@ -1,17 +1,20 @@
-import 'package:cupboard/data/services/shared_preferences_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:cupboard/data/repositories/user/fire_user_repository.dart';
-
-import 'package:cupboard/data/services/fire_auth_service.dart';
+import 'package:cupboard/data/services/shared_preferences_service.dart';
 
 import 'package:cupboard/domain/entities/user_data.dart';
+
+import 'package:cupboard/domain/repositories/abstract_repository.dart';
+
+import 'package:cupboard/data/services/fire_auth_service.dart';
 
 import 'package:cupboard/domain/exceptions/auth_exception.dart';
 import 'package:cupboard/domain/exceptions/persitence_exception.dart';
 
 class AuthenticationService {
-  FireUserRepository repository = FireUserRepository();
+  final AbstractRepository<UserData> userRepository;
+
+  const AuthenticationService(this.userRepository);
 
   Future<void> signInWithEmailAndPassword(String email, String secret) async {
     try {
@@ -24,11 +27,11 @@ class AuthenticationService {
       User? user = userCredential.user;
 
       if (user != null) {
-        UserData userData = await repository.getById(user.uid);
+        UserData? userData = await userRepository.getById(user.uid);
         print("usuario autenticado");
 
         SharedPreferencesService.instance
-            .setString("current-uid-user", userData.uid);
+            .setString("current-uid-user", userData!.uid);
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -65,7 +68,8 @@ class AuthenticationService {
         UserData entity = UserData(uid: user.uid);
         entity.email = email;
 
-        await repository.add(entity);
+        await userRepository.add(entity);
+
         SharedPreferencesService.instance
             .setString("current-uid-user", entity.uid);
         print("usuario creado");

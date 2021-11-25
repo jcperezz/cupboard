@@ -14,7 +14,9 @@ class AuthenticationNotifier extends ChangeNotifier {
   bool isLoading = false;
   String? uid;
 
-  AuthenticationNotifier() {
+  final AuthenticationService service;
+
+  AuthenticationNotifier(this.service) {
     isAuth();
   }
 
@@ -25,7 +27,7 @@ class AuthenticationNotifier extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await AuthenticationService().signInWithEmailAndPassword(email, secret);
+      await service.signInWithEmailAndPassword(email, secret);
     } on AuthException catch (e) {
       print("Auth error $e");
       NotificationsService.showSnackbarError(labels.getMessage(e.label));
@@ -47,8 +49,7 @@ class AuthenticationNotifier extends ChangeNotifier {
     print("inicio usuario registrado");
 
     try {
-      await AuthenticationService()
-          .createUserWithEmailAndPassword(email, secret);
+      await service.createUserWithEmailAndPassword(email, secret);
     } on AuthException catch (e) {
       print("Auth error $e");
       NotificationsService.showSnackbarError(label.getMessage(e.label));

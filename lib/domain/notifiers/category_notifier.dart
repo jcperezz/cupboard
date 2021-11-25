@@ -1,18 +1,17 @@
-import 'package:cupboard/data/repositories/category/fire_category_repository.dart';
 import 'package:cupboard/domain/entities/category.dart';
+import 'package:cupboard/domain/repositories/abstract_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class CategoryNotifier extends ChangeNotifier {
   final String? uid;
   final String? cupboardUid;
 
-  late final FireCategoryRepository repository;
+  late final AbstractRepository<Category> categoryRepository;
 
   bool isLoading = true;
   Map<String, Category> categories = Map();
 
-  CategoryNotifier(this.uid, this.cupboardUid) {
-    repository = FireCategoryRepository();
+  CategoryNotifier(this.uid, this.cupboardUid, this.categoryRepository) {
     getCategories();
   }
 
@@ -20,11 +19,7 @@ class CategoryNotifier extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    Map<String, Category> generalCategories = await repository.getAll();
-    Map<String, Category> categoriesByUser = await repository.getAll(uid);
-
-    categories.addAll(generalCategories);
-    categories.addAll(categoriesByUser);
+    categories = await categoryRepository.getAll(cupboardUid);
 
     isLoading = false;
     notifyListeners();
@@ -33,7 +28,7 @@ class CategoryNotifier extends ChangeNotifier {
   Future<void> addCategory(Category category) async {
     isLoading = true;
     notifyListeners();
-    repository.add(category);
+    categoryRepository.add(category);
     getCategories();
     isLoading = false;
     notifyListeners();

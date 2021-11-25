@@ -13,7 +13,6 @@ import 'package:cupboard/domain/notifiers/authentication_notifier.dart';
 
 //widgets
 import 'package:cupboard/widgets/button.dart';
-import 'package:cupboard/widgets/navbar.dart';
 import 'package:cupboard/widgets/form-input.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -37,19 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final authService = Provider.of<AuthenticationNotifier>(context);
     return LoadingOverlay(
       child: _buildSafeArea(context),
-      isLoading: authService.isLoading,
-    );
-  }
-
-  Widget _buildScaffoldBody(BuildContext context) {
-    final authService = Provider.of<AuthenticationNotifier>(context);
-    return LoadingOverlay(
-      child: Stack(
-        children: [
-          _buildBackground(),
-          _buildSafeArea(context),
-        ],
-      ),
       isLoading: authService.isLoading,
     );
   }
@@ -132,8 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
         placeholder: Labels.of(context).getMessage('email_label'),
         keyboardType: TextInputType.emailAddress,
         prefixIcon: Icon(Icons.email),
-        validator: (value) => Validator<String>(value)
-            .mandatory(msg: Labels.of(context).getMessage('email_mandatory'))
+        validator: (value) => Validator<String>(context, value)
+            .mandatory(msg: 'email_mandatory')
             .length(min: 5, max: 64)
             .isEmail()
             .validate(),
@@ -151,9 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.text,
           placeholder: Labels.of(context).getMessage('password_label'),
           prefixIcon: Icon(Icons.lock),
-          validator: (value) => Validator<String>(value)
-              .mandatory(
-                  msg: Labels.of(context).getMessage('password_mandatory'))
+          validator: (value) => Validator<String>(context, value)
+              .mandatory(msg: 'password_mandatory')
               .length(min: 5, max: 64)
               .validate(),
         ),
@@ -166,12 +151,9 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.text,
             placeholder: Labels.of(context).getMessage('password_repeat_label'),
             prefixIcon: Icon(Icons.lock),
-            validator: (value) => Validator<String>(value)
-                .mandatory(
-                    msg: Labels.of(context).getMessage('password_mandatory'))
-                .equals(
-                    msg: Labels.of(context).getMessage('password_equals'),
-                    target: _secret)
+            validator: (value) => Validator<String>(context, value)
+                .mandatory(msg: 'password_mandatory')
+                .equals(msg: 'password_equals', target: _secret)
                 .length(min: 5, max: 64)
                 .validate(),
           ),
@@ -219,15 +201,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildBackground() {
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/img/register-bg.png"),
-              fit: BoxFit.cover)),
     );
   }
 

@@ -2,45 +2,40 @@ import 'package:firebase_database/firebase_database.dart';
 
 import 'package:cupboard/data/repositories/user/fire_user_repository.dart';
 
-import 'package:cupboard/data/services/shared_preferences_service.dart';
-
 import 'package:cupboard/domain/entities/cupboard.dart';
 import 'package:cupboard/domain/entities/user_data.dart';
 
-import 'package:cupboard/domain/repositories/abstract_repository.dart';
+import 'package:cupboard/domain/repositories/abstract_fire_repository.dart';
 
-class FireCupboardRepository extends AbstractRepository<Cupboard> {
+class FireCupboardRepository extends AbstractFireRepository<Cupboard> {
+  final FireUserDataRepository userDataRepository;
+
+  FireCupboardRepository(this.userDataRepository);
+
   @override
-  Future<void> add(Cupboard entity) async {
-    String? uid =
-        await SharedPreferencesService.instance.getString("current-uid-user");
-
+  Future<String> add(Cupboard entity) async {
     DatabaseReference db = getCurrentUserPath().push();
     await db.set(entity.toMap());
     String keyNewCupboard = db.key;
 
-    await getCurrentUserPath(uid)
+    await getCurrentUserPath(entity.owner)
         .push()
         .set(UserCupboard(key: keyNewCupboard, name: entity.name).toMap());
+
+    return keyNewCupboard;
   }
 
   @override
-  Future<Map<String, Cupboard>> getAll() async {
-    String? uid =
-        await SharedPreferencesService.instance.getString("current-uid-user");
-
+  Future<Map<String, Cupboard>> getAll([String? userUid]) async {
     Map<String, Cupboard> list = Map();
 
-    if (uid == null) return list;
+    if (userUid == null) return list;
 
-    UserData user = await FireUserRepository().getById(uid);
+    UserData user = await userDataRepository.getById(userUid);
 
     if (user.cupboards != null) {
       for (var userCupboard in user.cupboards!) {
         Cupboard? c = await getById(userCupboard.key);
-
-        print("cupboard ${userCupboard.key} $c");
-
         if (c != null) list[userCupboard.key] = c;
       }
     }
