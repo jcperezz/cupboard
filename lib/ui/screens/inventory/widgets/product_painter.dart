@@ -10,7 +10,7 @@ class MyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final textStyle = GoogleFonts.londrinaShadow(
       color: Colors.white,
-      fontSize: 40,
+      fontSize: 45,
     );
 
     final textSpan = TextSpan(

@@ -62,11 +62,12 @@ final newProductHandler = Handler(handlerFunc: (context, params) {
       authProvider.uid,
       cupboardUid,
       DI.getIt<FireProductItemRepository>(),
+      DI.getIt<FireProductRepository>(),
     );
 
     return Layout(
       MultiProvider(
-        child: ProductScreen(product: product, cupboardUid: cupboardUid!),
+        child: ProductItemScreen(product: product, cupboardUid: cupboardUid!),
         providers: [
           ChangeNotifierProvider.value(value: categoryNotifier),
           ChangeNotifierProvider.value(value: productNotifier),
@@ -93,10 +94,17 @@ final inventoryHandler = Handler(handlerFunc: (context, params) {
       DI.getIt<FireCategoryRepository>(),
     );
 
-    final productNotifier = ProductItemNotifier(
+    final productItemNotifier = ProductItemNotifier(
       authProvider.uid,
       cupboardUid,
       DI.getIt<FireProductItemRepository>(),
+      DI.getIt<FireProductRepository>(),
+    );
+
+    final productNotifier = ProductNotifier(
+      authProvider.uid,
+      cupboardUid,
+      DI.getIt<FireProductRepository>(),
     );
 
     return Layout(
@@ -105,6 +113,7 @@ final inventoryHandler = Handler(handlerFunc: (context, params) {
         providers: [
           ChangeNotifierProvider.value(value: categoryNotifier),
           ChangeNotifierProvider.value(value: productNotifier),
+          ChangeNotifierProvider.value(value: productItemNotifier),
         ],
       ),
       title: "Inventory",

@@ -10,17 +10,18 @@ class DI {
 
   static void setup() {
     getIt.registerSingleton<FireUserDataRepository>(FireUserDataRepository());
+
     getIt.registerSingleton<FireCupboardRepository>(
         FireCupboardRepository(getIt<FireUserDataRepository>()));
+
     getIt.registerSingleton<FireCategoryRepository>(FireCategoryRepository());
-    getIt.registerSingleton<FireProductRepository>(FireProductRepository());
-    getIt.registerSingleton<FireProductItemRepository>(
-        FireProductItemRepository());
+
     getIt.registerSingleton<FireProductRepository>(FireProductRepository());
 
-    getIt.registerSingletonWithDependencies(() {
-      final userRepository = getIt<FireUserDataRepository>();
-      return AuthenticationService(userRepository);
-    });
+    getIt.registerSingleton<FireProductItemRepository>(
+        FireProductItemRepository());
+
+    getIt.registerSingleton<AuthenticationService>(
+        AuthenticationService(getIt<FireUserDataRepository>()));
   }
 }

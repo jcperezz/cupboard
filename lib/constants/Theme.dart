@@ -51,6 +51,11 @@ class ArgonColors {
   static TextStyle get titleCardWhite =>
       GoogleFonts.openSans(color: Colors.white);
 
+  static TextStyle get expandedTitle =>
+      GoogleFonts.openSans(fontWeight: FontWeight.bold);
+
+  static TextStyle get expandedSubTitle => GoogleFonts.openSans();
+
   static TextStyle get titleCardProducts =>
       GoogleFonts.openSans(color: Colors.white, fontWeight: FontWeight.bold);
 

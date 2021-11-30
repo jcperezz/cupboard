@@ -26,6 +26,7 @@ class FireProductRepository extends AbstractFireRepository<Product> {
 
     if (snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;
+
       list = response
           .map((key, value) => new MapEntry(key, Product.fromMap(key, value)));
     }

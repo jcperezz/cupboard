@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:cupboard/domain/repositories/abstract_repository.dart';
 
 class ProductNotifier extends ChangeNotifier {
+  final AbstractRepository<Product> repository;
+
   final String? userUid;
   final String? cupboardUid;
-  late final AbstractRepository<Product> repository;
 
   bool isLoading = true;
   Map<String, Product> products = Map();
@@ -19,7 +20,7 @@ class ProductNotifier extends ChangeNotifier {
   Future<void> getAll() async {
     isLoading = true;
     notifyListeners();
-    products = await repository.getAll(userUid);
+    products = await repository.getAll(cupboardUid);
 
     products.forEach((key, value) {
       String category = value.category!;

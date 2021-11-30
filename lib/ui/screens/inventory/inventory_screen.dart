@@ -1,3 +1,4 @@
+import 'package:cupboard/domain/notifiers/product_notifier.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/grid_categories_widget.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/search_product.dart';
 import 'package:flutter/material.dart';
@@ -26,19 +27,19 @@ class InventoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProductItemNotifier productNotifier =
-        Provider.of<ProductItemNotifier>(context, listen: true);
+    final productNotifier = Provider.of<ProductNotifier>(context, listen: true);
 
     return Stack(
       alignment: AlignmentDirectional.bottomEnd,
       children: [
         Align(alignment: Alignment.topCenter, child: _buildSafeArea(context)),
         Align(
-            alignment: Alignment.bottomCenter,
-            child: SearchBar(
-              products: productNotifier.products.values.toList(),
-              cupboardUid: cupboardId,
-            )),
+          alignment: Alignment.bottomCenter,
+          child: SearchBar(
+            products: productNotifier.products.values.toList(),
+            cupboardUid: cupboardId,
+          ),
+        ),
       ],
     );
   }
@@ -54,10 +55,8 @@ class InventoryScreen extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    final CategoryNotifier notifier =
-        Provider.of<CategoryNotifier>(context, listen: true);
-
-    final ProductItemNotifier productNotifier =
+    final notifier = Provider.of<CategoryNotifier>(context, listen: true);
+    final productNotifier =
         Provider.of<ProductItemNotifier>(context, listen: true);
 
     Iterable<Category> categories = notifier.categories.values;
@@ -69,7 +68,7 @@ class InventoryScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSortingTitle(context),
-            CategoriesList(
+            CategoriesProductsItemList(
               categories: categories,
               products: productNotifier.productsByCategory,
               cupboardUid: cupboardId,

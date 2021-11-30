@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cupboard/domain/entities/entity.dart';
+import 'package:cupboard/domain/entities/product.dart';
 import 'package:intl/intl.dart';
 
 enum InventoryStatus {
@@ -10,37 +10,49 @@ enum InventoryStatus {
   expired,
 }
 
-class ProductItem extends Entity {
+class ProductItem extends Product {
+  static final short_date_formater = DateFormat("d/M/yy");
+  static final full_date_formater = DateFormat("dd/MM/yyyy");
+  static final db_date_formater = DateFormat.yMd();
+
   ProductItem({
-    this.category,
-    required this.name,
+    String? category,
+    required String name,
     this.quantity,
     this.expirationDate,
-    this.image,
+    String? image,
     String? id,
     String? owner,
-    this.cupboardUid,
-  }) : super(id: id, owner: owner);
+    String? cupboardUid,
+    this.detail,
+  }) : super(
+          name: name,
+          category: category,
+          image: image,
+          id: id,
+          owner: owner,
+          cupboardUid: cupboardUid,
+        );
 
-  String? category;
-  String name;
   int? quantity;
   String? expirationDate;
-  String? image;
-  String? cupboardUid;
+  String? detail;
 
   DateTime? get expirationDateObject =>
-      expirationDate != null ? DateFormat.yMd().parse(expirationDate!) : null;
+      expirationDate != null ? db_date_formater.parse(expirationDate!) : null;
 
   String? get expirationDateShort => expirationDateObject != null
-      ? DateFormat("d/M/yy").format(expirationDateObject!)
+      ? short_date_formater.format(expirationDateObject!)
+      : null;
+  String? get expirationDateFull => expirationDateObject != null
+      ? full_date_formater.format(expirationDateObject!)
       : null;
 
   InventoryStatus get productStatus {
     if (expirationDateObject == null) {
       return InventoryStatus.pending;
     } else {
-      final int days = DateTime.now().difference(expirationDateObject!).inDays;
+      final int days = expirationDateObject!.difference(DateTime.now()).inDays;
       if (days <= 5) {
         return InventoryStatus.expired;
       } else if (days <= 30) {
@@ -54,6 +66,14 @@ class ProductItem extends Entity {
   factory ProductItem.fromJson(String str) =>
       ProductItem.fromMap(json.decode(str));
 
+  factory ProductItem.fromProduct(Product p) => ProductItem(
+        name: p.name,
+        category: p.category,
+        cupboardUid: p.cupboardUid,
+        image: p.image,
+        owner: p.owner,
+      );
+
   String toJson() => json.encode(toMap());
 
   factory ProductItem.fromMap(Map<String, dynamic> json, {String? id}) =>
@@ -64,6 +84,7 @@ class ProductItem extends Entity {
         expirationDate: json["expiration_date"],
         image: json["image"],
         cupboardUid: json["cupboardUid"],
+        detail: json["detail"],
         id: id,
       );
 
@@ -74,5 +95,6 @@ class ProductItem extends Entity {
         "expiration_date": expirationDate,
         "image": image,
         "cupboardUid": cupboardUid,
+        "detail": detail,
       };
 }

@@ -114,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: FormInput(
+        autofocus: true,
         onChanged: (value) => setState(() => _email = value),
         placeholder: Labels.of(context).getMessage('email_label'),
         keyboardType: TextInputType.emailAddress,
@@ -132,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: FormInput(
+          autofocus: true,
           onChanged: (value) => setState(() => _secret = value),
           obscureText: true,
           keyboardType: TextInputType.text,
@@ -148,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.all(8.0),
           child: FormInput(
             obscureText: true,
+            autofocus: true,
             keyboardType: TextInputType.text,
             placeholder: Labels.of(context).getMessage('password_repeat_label'),
             prefixIcon: Icon(Icons.lock),

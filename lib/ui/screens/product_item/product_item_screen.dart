@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
-import 'package:intl/intl.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
@@ -20,18 +19,19 @@ import 'package:cupboard/locale/labels.dart';
 import 'package:cupboard/widgets/button.dart';
 import 'package:cupboard/widgets/form-input.dart';
 
-class ProductScreen extends StatefulWidget {
+class ProductItemScreen extends StatefulWidget {
   final ProductItem product;
   final String cupboardUid;
 
-  ProductScreen({Key? key, required this.product, required this.cupboardUid})
+  ProductItemScreen(
+      {Key? key, required this.product, required this.cupboardUid})
       : super(key: key);
 
   @override
-  _ProductScreenState createState() => _ProductScreenState();
+  _ProductItemScreenState createState() => _ProductItemScreenState();
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _ProductItemScreenState extends State<ProductItemScreen> {
   final _formKey = GlobalKey<FormState>();
   final double height = window.physicalSize.height;
 
@@ -39,20 +39,29 @@ class _ProductScreenState extends State<ProductScreen> {
   String? _categoryUid;
   DateTime? _expirationDate;
   TextEditingController _expirationDateController = TextEditingController();
+  Map<String, Category> _categoriesMap = Map();
 
   @override
   Widget build(BuildContext context) {
-    if (_expirationDate == null && widget.product.expirationDate != null) {
-      _expirationDateController.text =
-          DateFormat("dd/MM/yyyy").format(widget.product.expirationDateObject!);
+    if (_categoryUid == null) {
+      _categoryUid = widget.product.category;
     }
+
+    if (_expirationDate == null && widget.product.expirationDate != null) {
+      _expirationDateController.text = widget.product.expirationDateFull!;
+      _expirationDate = widget.product.expirationDateObject;
+      _quantity = widget.product.quantity;
+    }
+
     return _buildPageBody(context);
   }
 
   Widget _buildPageBody(BuildContext context) {
+    final service = Provider.of<CategoryNotifier>(context);
+    _categoriesMap = service.categories;
     return LoadingOverlay(
       child: _buildSafeArea(context),
-      isLoading: false,
+      isLoading: service.isLoading,
     );
   }
 
@@ -102,7 +111,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildCategory(context),
+                      _buildCategory(),
                       _buildQuantity(),
                       _buildDatePicker(context),
                     ],
@@ -129,10 +138,7 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget _buildCategory(BuildContext context) {
-    final service = Provider.of<CategoryNotifier>(context);
-    final categoriesMap = service.categories;
-
+  Widget _buildCategory() {
     final labels = Labels.of(context);
 
     return Padding(
@@ -141,9 +147,9 @@ class _ProductScreenState extends State<ProductScreen> {
         mode: Mode.MENU,
         dialogMaxWidth: 200,
         maxHeight: 266,
-        items: categoriesMap.values.toList(),
+        items: _categoriesMap.values.toList(),
         selectedItem: widget.product.category != null
-            ? categoriesMap[widget.product.category]
+            ? _categoriesMap[widget.product.category]
             : null,
         showSearchBox: true,
         dropdownSearchDecoration:
@@ -209,8 +215,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       (picker.adapter as DateTimePickerAdapter).value;
 
                   if (_expirationDate != null)
-                    _expirationDateController.text = DateFormat("dd-MM-yyyy")
-                        .format(_expirationDate!); // TODO pasar a una constante
+                    _expirationDateController.text =
+                        ProductItem.full_date_formater.format(_expirationDate!);
                 });
               }).showDialog(context);
         },
@@ -244,13 +250,19 @@ class _ProductScreenState extends State<ProductScreen> {
                 if (_formKey.currentState!.validate()) {
                   widget.product.category = _categoryUid!;
                   widget.product.expirationDate =
-                      DateFormat.yMd().format(_expirationDate!);
-                  widget.product.quantity = _quantity!;
+                      ProductItem.db_date_formater.format(_expirationDate!);
 
-                  if (widget.product.id == null) notifier.add(widget.product);
+                  widget.product.quantity = _quantity!;
+                  widget.product.cupboardUid = widget.cupboardUid;
+
+                  if (widget.product.id == null) {
+                    notifier.add(widget.product);
+                  } else {
+                    notifier.update(widget.product);
+                  }
 
                   Navigator.of(context)
-                      .pushNamed("/inventory/${widget.product.cupboardUid}");
+                      .pushReplacementNamed("/inventory/${widget.cupboardUid}");
                 }
               },
             ),

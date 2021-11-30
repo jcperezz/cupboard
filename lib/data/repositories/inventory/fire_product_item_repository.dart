@@ -45,14 +45,18 @@ class FireProductItemRepository extends AbstractFireRepository<ProductItem> {
   }
 
   @override
-  Future<void> remove(ProductItem entity) {
-    // TODO: implement remove
-    throw UnimplementedError();
+  Future<void> remove(ProductItem entity) async {
+    DatabaseReference db = getDb()
+        .child("cupboards/${entity.cupboardUid}")
+        .child("$path/${entity.id}");
+    await db.remove();
   }
 
   @override
-  Future<void> update(ProductItem entity) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update(ProductItem entity) async {
+    DatabaseReference db = getDb()
+        .child("cupboards/${entity.cupboardUid}")
+        .child("$path/${entity.id}");
+    await db.set(entity.toMap());
   }
 }

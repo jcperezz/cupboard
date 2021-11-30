@@ -1,4 +1,5 @@
 import 'package:cupboard/constants/Theme.dart';
+import 'package:cupboard/domain/entities/product.dart';
 import 'package:cupboard/domain/entities/product_item.dart';
 import 'package:cupboard/locale/labels.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/grid_products_widget.dart';
@@ -7,7 +8,7 @@ import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
-  final List<ProductItem> products;
+  final List<Product> products;
   final String cupboardUid;
 
   const SearchBar({Key? key, required this.products, required this.cupboardUid})
@@ -23,7 +24,7 @@ class _SearchBarState extends State<SearchBar> {
 
   bool _isExpanded = false;
   Labels? _labels;
-  List<ProductItem> _products = [];
+  List<Product> _products = [];
   String? _newProductName;
 
   @override
@@ -82,6 +83,7 @@ class _SearchBarState extends State<SearchBar> {
         cardColor: Colors.blue,
         newProductName: _newProductName,
         cupboardUid: widget.cupboardUid,
+        isSmallCard: true,
       ),
     );
   }
