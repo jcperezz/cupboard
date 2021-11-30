@@ -233,6 +233,7 @@ class ProductsGrid extends StatelessWidget {
 
   AwesomeDialog _buildDialog(BuildContext context, ProductItem product) {
     final notifier = Provider.of<ProductItemNotifier>(context, listen: false);
+    final lb = Labels.of(context);
 
     return AwesomeDialog(
       context: context,
@@ -240,12 +241,11 @@ class ProductsGrid extends StatelessWidget {
       dialogType: DialogType.INFO,
       animType: AnimType.BOTTOMSLIDE,
       //dialogBackgroundColor: Colors.white,
-
-      title: 'Eliminar Item',
-      desc: '¿Desea eliminar el ítem?',
+      //title: 'Eliminar Item',
+      desc: lb.getMessage("delete_confirm", [product.name]),
       btnCancelOnPress: () {},
       btnOkOnPress: () {
-        notifier.remove(product);
+        notifier.remove(product, context);
         Navigator.of(context).pushReplacementNamed("/inventory/$cupboardUid");
       },
     );

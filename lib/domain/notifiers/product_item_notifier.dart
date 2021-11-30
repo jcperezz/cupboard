@@ -1,4 +1,6 @@
 import 'package:cupboard/domain/entities/product.dart';
+import 'package:cupboard/locale/labels.dart';
+import 'package:cupboard/services/notifications_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cupboard/domain/entities/product_item.dart';
@@ -58,10 +60,12 @@ class ProductItemNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> remove(ProductItem product) async {
+  Future<void> remove(ProductItem product, BuildContext context) async {
     isLoading = true;
     notifyListeners();
     await productItemRepository.remove(product);
     await getAll();
+    final lb = Labels.of(context);
+    NotificationsService.showSnackbar(lb.getMessage("delete_successful"));
   }
 }

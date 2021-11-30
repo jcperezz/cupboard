@@ -1,8 +1,12 @@
+import 'package:cupboard/domain/entities/product_item.dart';
 import 'package:cupboard/domain/notifiers/product_notifier.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/grid_categories_widget.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/search_product.dart';
+import 'package:cupboard/widgets/input.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
 
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -20,10 +24,18 @@ import 'package:cupboard/domain/notifiers/product_item_notifier.dart';
 import 'package:cupboard/domain/notifiers/category_notifier.dart';
 import 'package:cupboard/domain/entities/category.dart';
 
-class InventoryScreen extends StatelessWidget {
+class InventoryScreen extends StatefulWidget {
   final String cupboardId;
 
   const InventoryScreen({Key? key, required this.cupboardId}) : super(key: key);
+
+  @override
+  _InventoryScreenState createState() => _InventoryScreenState();
+}
+
+class _InventoryScreenState extends State<InventoryScreen> {
+  String? _search;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +44,15 @@ class InventoryScreen extends StatelessWidget {
     return Stack(
       alignment: AlignmentDirectional.bottomEnd,
       children: [
-        Align(alignment: Alignment.topCenter, child: _buildSafeArea(context)),
+        Align(
+          alignment: Alignment.topCenter,
+          child: _buildSafeArea(context),
+        ),
         Align(
           alignment: Alignment.bottomCenter,
           child: SearchBar(
             products: productNotifier.products.values.toList(),
-            cupboardUid: cupboardId,
+            cupboardUid: widget.cupboardId,
           ),
         ),
       ],
@@ -48,7 +63,7 @@ class InventoryScreen extends StatelessWidget {
     return SafeArea(
       child: Padding(
         padding:
-            const EdgeInsets.only(top: 8, left: 24.0, right: 24.0, bottom: 120),
+            const EdgeInsets.only(top: 8, left: 24.0, right: 24.0, bottom: 80),
         child: _buildBody(context),
       ),
     );
@@ -59,49 +74,158 @@ class InventoryScreen extends StatelessWidget {
     final productNotifier =
         Provider.of<ProductItemNotifier>(context, listen: true);
 
-    Iterable<Category> categories = notifier.categories.values;
+    final categories = notifier.categories;
+    final filterCategoriesList = <Category>[];
+    final productsByCategory = productNotifier.productsByCategory;
+    final filterProductsMap = Map<String, List<ProductItem>>();
+
+    if (_search != null && _search!.length > 0) {
+      productsByCategory.forEach((key, value) {
+        final newList = <ProductItem>[];
+
+        value.forEach((element) {
+          if (element.name.toLowerCase().contains(_search!.toLowerCase())) {
+            newList.add(element);
+          }
+        });
+
+        if (newList.isNotEmpty) {
+          filterProductsMap[key] = newList;
+          filterCategoriesList.add(categories[key]!);
+        }
+      });
+    } else {
+      filterProductsMap.addAll(productsByCategory);
+      filterCategoriesList.addAll(categories.values);
+    }
 
     return LoadingOverlay(
       isLoading: notifier.isLoading,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSortingTitle(context),
-            CategoriesProductsItemList(
-              categories: categories,
-              products: productNotifier.productsByCategory,
-              cupboardUid: cupboardId,
-            ),
-            _buildAddCategoryTitle(context),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPageTitle(context),
+          CategoriesProductsItemList(
+            categories: filterCategoriesList,
+            products: filterProductsMap,
+            cupboardUid: widget.cupboardId,
+          ),
+          _buildAddCategoryTitle(context),
+        ],
       ),
     );
   }
 
-  Widget _buildSortingTitle(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        child: Container(
-          height: 45,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Icon(Icons.view_comfortable_rounded, color: Colors.white),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  Labels.of(context).getMessage("view_options"),
-                  style: ArgonColors.titleWhite,
-                ),
+  Widget _buildPageTitle(BuildContext context) {
+    final lb = Labels.of(context);
+
+    return Container(
+      height: 40,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            width: 300,
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                suffixIcon: _buildSearchIconButton(),
+                hintText: lb.getMessage("search_label"),
               ),
-            ],
+              onEditingComplete: () {
+                setState(() {});
+              },
+              onChanged: (String? value) {
+                setState(() {
+                  _search = value;
+                });
+              },
+            ),
           ),
-        ),
+          VerticalDivider(
+            color: ArgonColors.muted,
+          ),
+          PopupMenuButton(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.view_comfortable_rounded, color: Colors.white),
+                  Text(
+                    lb.getMessage("view_options"),
+                    style: ArgonColors.titleWhite,
+                  ),
+                ],
+              ),
+              itemBuilder: (context) => <PopupMenuEntry>[
+                    PopupMenuItem(
+                      value: 1,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.view_comfortable_rounded),
+                            SizedBox(width: 5),
+                            Text("Tiles"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 1,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.list),
+                            SizedBox(width: 5),
+                            Text("List"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    PopupMenuDivider(),
+                    PopupMenuItem(
+                      value: 1,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("Group items"),
+                            //SizedBox(width: 5),
+                            Switch(
+                                value: true,
+                                onChanged: (value) => print("tales")),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ]),
+        ],
       ),
     );
+  }
+
+  Widget _buildSearchIconButton() {
+    return _search != null && _search!.length > 0
+        ? IconButton(
+            icon: Icon(Icons.cancel),
+            onPressed: () {
+              setState(() {
+                _search = null;
+                _searchController.clear();
+              });
+            },
+          )
+        : Icon(Icons.search_outlined);
   }
 
   Widget _buildAddCategoryTitle(BuildContext context) {
@@ -136,6 +260,7 @@ class InventoryScreen extends StatelessWidget {
       width: MediaQuery.of(context).size.width * (kIsWeb ? 0.35 : 0.75),
       dialogType: DialogType.NO_HEADER,
       animType: AnimType.BOTTOMSLIDE,
+      dialogBackgroundColor: Colors.white,
       body: _BodyDialog(service: notifier),
     );
   }

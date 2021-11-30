@@ -35,7 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildPageBody(BuildContext context) {
     final authService = Provider.of<AuthenticationNotifier>(context);
     return LoadingOverlay(
-      child: _buildSafeArea(context),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 100),
+        child: _buildSafeArea(context),
+      ),
       isLoading: authService.isLoading,
     );
   }

@@ -35,9 +35,7 @@ class _SearchBarState extends State<SearchBar> {
 
   Widget _search() {
     return Container(
-      decoration: BoxDecoration(
-          color: Color.fromRGBO(33, 36, 58, 1.0),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(8.0))),
+      decoration: _buildBoxDecoration(),
       child: ExpansionTileCard(
         key: _expandKey,
         duration: const Duration(milliseconds: 600),
@@ -74,6 +72,12 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 
+  BoxDecoration _buildBoxDecoration() {
+    return BoxDecoration(
+        color: Color.fromRGBO(33, 36, 58, 1.0),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)));
+  }
+
   Widget _buildExpandableBody() {
     return Container(
       width: double.infinity,
@@ -91,16 +95,16 @@ class _SearchBarState extends State<SearchBar> {
   Widget _buildTitle() {
     return Container(
       color: Colors.transparent,
-      height: _isExpanded ? 55 : 110,
+      height: _isExpanded ? 55 : 70,
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 4, left: 15, right: 1),
         child: Input(
-            placeholder: _labels!.getMessage("search_label"),
+            placeholder: _labels!.getMessage("search_add_label"),
             keyboardType: TextInputType.name,
             textCapitalization: TextCapitalization.words,
             controller: controller,
             //autofocus: widget.searchAutofocus,
-            prefixIcon: Icon(Icons.search_outlined, color: ArgonColors.muted),
+            prefixIcon: Icon(Icons.add_box, color: ArgonColors.muted),
             onChanged: (value) {
               if (value.isEmpty) {
                 setState(() {

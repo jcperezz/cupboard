@@ -8,6 +8,7 @@ enum InventoryStatus {
   avalaible,
   close_to_expire,
   expired,
+  all,
 }
 
 class ProductItem extends Product {

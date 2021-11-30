@@ -12,7 +12,7 @@ import 'package:cupboard/constants/Theme.dart';
 
 // ignore: must_be_immutable
 class CategoriesProductsItemList extends StatefulWidget {
-  final Iterable<Category> categories;
+  final List<Category> categories;
   final Map<String, List<ProductItem>> products;
   late Map<String, List<ProductItem>> _productsTarget;
   final String cupboardUid;
@@ -37,15 +37,20 @@ class _CategoriesProductsItemListState
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children:
-          widget.categories.map((e) => _buildGridProducts(context, e)).toList(),
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widget.categories
+              .map((e) => _buildGridProducts(context, e))
+              .toList(),
+        ),
+      ),
     );
   }
 
   Widget _buildGridProducts(BuildContext context, Category category) {
-    if (widget.products[category.id] == null) return Container();
+    //if (widget.products[category.id] == null) return Container();
 
     final statusCount = _getInventoryStatusCount(widget.products[category.id]);
 
@@ -71,6 +76,7 @@ class _CategoriesProductsItemListState
     counts[InventoryStatus.avalaible] = 0;
     counts[InventoryStatus.close_to_expire] = 0;
     counts[InventoryStatus.expired] = 0;
+    counts[InventoryStatus.all] = products.length;
 
     products.forEach((element) {
       switch (element.productStatus) {
@@ -158,7 +164,8 @@ class _CategoriesProductsItemListState
                     children: [
                       Icon(Icons.all_inbox_rounded),
                       SizedBox(width: 5),
-                      Text(lb.getMessage("show_all")),
+                      Text(lb.getMessage(
+                          "show_all", [statusCount[InventoryStatus.all]])),
                     ],
                   ),
                 ),

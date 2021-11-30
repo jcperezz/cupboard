@@ -11,29 +11,27 @@ import 'package:provider/provider.dart';
 class MainWebLayout extends StatelessWidget {
   final Widget child;
   final String title;
-  final bool onlyBody;
+  final bool showNavBar;
+  final bool showFooterBar;
 
-  const MainWebLayout(this.child, {required this.title, this.onlyBody = false});
+  const MainWebLayout(
+    this.child, {
+    required this.title,
+    this.showNavBar = false,
+    this.showFooterBar = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return this.onlyBody ? _buildOnlyBody(context) : _buildFullBody(context);
+    return _buildScaffold(context);
   }
 
-  Widget _buildOnlyBody(BuildContext context) {
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: ArgonColors.bgColorScreen,
       body: _buildScaffoldBody(context),
       extendBody: true,
-    );
-  }
-
-  Widget _buildFullBody(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: ArgonColors.bgColorScreen,
-      body: _buildScaffoldBody(context),
     );
   }
 
@@ -44,7 +42,7 @@ class MainWebLayout extends StatelessWidget {
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           SizedBox(
             width: 600,
-            child: this.onlyBody ? _wrapChildren() : _wrapScafold(context),
+            child: _wrapScafold(context),
           ),
         ]),
       ],
@@ -54,21 +52,11 @@ class MainWebLayout extends StatelessWidget {
   Widget _wrapScafold(BuildContext context) {
     final Labels labels = Labels.of(context);
     return Scaffold(
-      appBar: NavBar2(title: labels.getMessage(title)),
+      appBar: showNavBar ? NavBar2(title: labels.getMessage(title)) : null,
+      bottomNavigationBar: showFooterBar ? BottomNavBar() : null,
       backgroundColor: Colors.transparent,
       extendBody: true,
-      //drawer: ArgonDrawer(currentPage: labels.getMessage(title)),
-      body: child,
-/*       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
-        onPressed: () {},
-        child: const Icon(
-          Icons.edit,
-          color: Colors.white,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, */
-      bottomNavigationBar: BottomNavBar(),
+      body: Center(child: child),
     );
   }
 
@@ -106,7 +94,9 @@ class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
       title: _buildTitle(context),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_outlined),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: Navigator.of(context).canPop()
+            ? () => Navigator.of(context).pop()
+            : null,
       ),
       actions: [
         IconButton(

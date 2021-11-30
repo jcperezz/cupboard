@@ -29,31 +29,31 @@ class Input extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-        cursorColor: ArgonColors.muted,
-        keyboardType: keyboardType,
-        onTap: onTap,
-        onChanged: onChanged,
-        controller: controller,
-        autofocus: autofocus,
-        style:
-            TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
-        textAlignVertical: TextAlignVertical(y: 0.6),
-        decoration: InputDecoration(
-            filled: true,
-            fillColor: ArgonColors.white,
-            hintStyle: TextStyle(
-              color: ArgonColors.muted,
-            ),
-            suffixIcon: suffixIcon,
-            prefixIcon: prefixIcon,
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
-                    color: borderColor, width: 1.0, style: BorderStyle.solid)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
-                    color: borderColor, width: 1.0, style: BorderStyle.solid)),
-            hintText: placeholder));
+      cursorColor: ArgonColors.muted,
+      keyboardType: keyboardType,
+      onTap: onTap,
+      onChanged: onChanged,
+      controller: controller,
+      autofocus: autofocus,
+      style:
+          TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
+      textAlignVertical: TextAlignVertical(y: 0.6),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: ArgonColors.white,
+        hintStyle: TextStyle(color: ArgonColors.muted),
+        suffixIcon: suffixIcon,
+        prefixIcon: prefixIcon,
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: BorderSide(
+                color: borderColor, width: 1.0, style: BorderStyle.solid)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: BorderSide(
+                color: borderColor, width: 1.0, style: BorderStyle.solid)),
+        hintText: placeholder,
+      ),
+    );
   }
 }

@@ -18,7 +18,7 @@ final homeHandler = Handler(handlerFunc: (context, params) {
   final authProvider = Provider.of<AuthenticationNotifier>(context!);
 
   if (authProvider.isLoading) {
-    return Layout(LoadingScreen(), title: "Loading", onlyBody: true);
+    return Layout(LoadingScreen(), title: "Loading");
   } else if (authProvider.uid != null) {
     final cupboardNotifier = DI.getIt<FireCupboardRepository>();
     final categoryNotifier = DI.getIt<FireCategoryRepository>();
@@ -28,20 +28,50 @@ final homeHandler = Handler(handlerFunc: (context, params) {
         authProvider.uid!, cupboardNotifier, categoryNotifier, productNotifier);
 
     return Layout(
-        MultiProvider(
-          child: CupboardsScreen(userUid: authProvider.uid!),
-          providers: [
-            ChangeNotifierProvider.value(value: notifier),
-          ],
-        ),
-        title: "Cupboards");
+      MultiProvider(
+        child: CupboardsScreen(userUid: authProvider.uid!),
+        providers: [
+          ChangeNotifierProvider.value(value: notifier),
+        ],
+      ),
+      title: "Cupboards",
+      showNavBar: true,
+    );
   } else {
-    return Layout(LoginScreen(), title: "Login", onlyBody: true);
+    return Layout(LoginScreen(), title: "Login");
+  }
+});
+
+final cupboardsHome = Handler(handlerFunc: (context, params) {
+  final authProvider = Provider.of<AuthenticationNotifier>(context!);
+
+  if (authProvider.isLoading) {
+    return Layout(LoadingScreen(), title: "Loading");
+  } else if (authProvider.uid != null) {
+    final cupboardNotifier = DI.getIt<FireCupboardRepository>();
+    final categoryNotifier = DI.getIt<FireCategoryRepository>();
+    final productNotifier = DI.getIt<FireProductRepository>();
+
+    final notifier = CupboardNotifier(
+        authProvider.uid!, cupboardNotifier, categoryNotifier, productNotifier);
+
+    return Layout(
+      MultiProvider(
+        child: CupboardsScreen(userUid: authProvider.uid!),
+        providers: [
+          ChangeNotifierProvider.value(value: notifier),
+        ],
+      ),
+      title: "Cupboards",
+      showNavBar: true,
+    );
+  } else {
+    return Layout(LoginScreen(), title: "Login");
   }
 });
 
 final registerHandler = Handler(handlerFunc: (context, params) {
-  return Layout(RegisterScreen(), title: "Registro", onlyBody: true);
+  return Layout(RegisterScreen(), title: "Registro");
 });
 
 final newProductHandler = Handler(handlerFunc: (context, params) {
@@ -51,7 +81,7 @@ final newProductHandler = Handler(handlerFunc: (context, params) {
   String? cupboardUid = params['uid']?.first;
 
   if (authProvider.isLoading) {
-    return Layout(LoadingScreen(), title: "Loading", onlyBody: true);
+    return Layout(LoadingScreen(), title: "Loading");
   } else if (authProvider.uid != null) {
     final categoryNotifier = CategoryNotifier(
       authProvider.uid,
@@ -74,9 +104,10 @@ final newProductHandler = Handler(handlerFunc: (context, params) {
         ],
       ),
       title: product.id != null ? "Edit Product" : "New Product",
+      showNavBar: true,
     );
   } else {
-    return Layout(LoginScreen(), title: "Login", onlyBody: true);
+    return Layout(LoginScreen(), title: "Login");
   }
 });
 
@@ -86,7 +117,7 @@ final inventoryHandler = Handler(handlerFunc: (context, params) {
   String? cupboardUid = params['uid']?.first;
 
   if (authProvider.isLoading) {
-    return Layout(LoadingScreen(), title: "Loading", onlyBody: true);
+    return Layout(LoadingScreen(), title: "Loading");
   } else if (authProvider.uid != null) {
     final categoryNotifier = CategoryNotifier(
       authProvider.uid,
@@ -117,9 +148,11 @@ final inventoryHandler = Handler(handlerFunc: (context, params) {
         ],
       ),
       title: "Inventory",
+      showNavBar: true,
+      showFooterBar: true,
     );
   } else {
-    return Layout(LoginScreen(), title: "Login", onlyBody: true);
+    return Layout(LoginScreen(), title: "Login");
   }
 });
 
@@ -132,6 +165,9 @@ class RouterManager {
 
     router.define('/home',
         handler: homeHandler, transitionType: TransitionType.fadeIn);
+
+    router.define('/cupboards',
+        handler: cupboardsHome, transitionType: TransitionType.fadeIn);
 
     router.define('/register',
         handler: registerHandler, transitionType: TransitionType.fadeIn);

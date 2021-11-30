@@ -21,6 +21,15 @@ class CategoryNotifier extends ChangeNotifier {
 
     categories = await categoryRepository.getAll(cupboardUid);
 
+    final mapEntries = categories.entries.toList()
+      ..sort((a, b) => a.value.name.compareTo(b.value.name));
+
+    categories
+      ..clear()
+      ..addEntries(mapEntries);
+
+    categories = Map.unmodifiable(categories);
+
     isLoading = false;
     notifyListeners();
   }
