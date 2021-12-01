@@ -1,9 +1,11 @@
+import 'package:collapsible_sidebar/collapsible_sidebar.dart';
+import 'package:cupboard/domain/entities/product.dart';
 import 'package:cupboard/domain/entities/product_item.dart';
 import 'package:cupboard/domain/notifiers/product_notifier.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/grid_categories_widget.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/search_product.dart';
-import 'package:cupboard/widgets/input.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
+import 'package:cupboard/ui/widgets/menu_status_filter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
@@ -34,8 +36,31 @@ class InventoryScreen extends StatefulWidget {
 }
 
 class _InventoryScreenState extends State<InventoryScreen> {
-  String? _search;
   final TextEditingController _searchController = TextEditingController();
+
+  String? _searchName;
+  InventoryStatus? _searchStatus;
+  int _viewOptionSeleted = 1;
+  bool _isLoading = true;
+
+  Map<String, List<ProductItem>> _filteredProductsMap = Map();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchController.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final itemState = Provider.of<ProductItemNotifier>(context);
+    _isLoading = itemState.isLoading;
+
+    if (!_isLoading) {
+      _filteredProductsMap = itemState.filteredProductsMap;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +71,17 @@ class _InventoryScreenState extends State<InventoryScreen> {
       children: [
         Align(
           alignment: Alignment.topCenter,
-          child: _buildSafeArea(context),
+          child: Row(
+            children: [
+              //_buildRail(),
+              Expanded(child: _buildSafeArea(context)),
+            ],
+          ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: SearchBar(
-            products: productNotifier.products.values.toList(),
+            products: productNotifier.productsList,
             cupboardUid: widget.cupboardId,
           ),
         ),
@@ -62,52 +92,73 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Widget _buildSafeArea(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding:
-            const EdgeInsets.only(top: 8, left: 24.0, right: 24.0, bottom: 80),
+        padding: const EdgeInsets.only(top: 8, bottom: 80),
         child: _buildBody(context),
       ),
     );
   }
 
+  Widget _buildRail() {
+    return NavigationRail(
+      selectedIndex: 0,
+      backgroundColor: Colors.transparent,
+      onDestinationSelected: (int index) {
+        setState(() {});
+      },
+      labelType: NavigationRailLabelType.all,
+      leading: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(icon: Icon(Icons.ac_unit_sharp), onPressed: null),
+          Divider(
+            color: Colors.white,
+            height: 10,
+            thickness: 10,
+          ),
+          IconButton(icon: Icon(Icons.ac_unit_sharp), onPressed: null),
+        ],
+      ),
+      trailing: IconButton(icon: Icon(Icons.ac_unit_sharp), onPressed: null),
+      //groupAlignment: 1,
+      destinations: const <NavigationRailDestination>[
+        NavigationRailDestination(
+          icon: Icon(Icons.favorite_border),
+          selectedIcon: Icon(Icons.favorite),
+          label: Text('First'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.bookmark_border),
+          selectedIcon: Icon(Icons.book),
+          label: Text('Second'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.star_border),
+          selectedIcon: Icon(Icons.star),
+          label: Text('Third'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.category_outlined),
+          selectedIcon: Icon(Icons.star),
+          label: Text('Add Category'),
+        ),
+      ],
+    );
+  }
+
   Widget _buildBody(BuildContext context) {
-    final notifier = Provider.of<CategoryNotifier>(context, listen: true);
-    final productNotifier =
-        Provider.of<ProductItemNotifier>(context, listen: true);
-
-    final categories = notifier.categories;
-    final filterCategoriesList = <Category>[];
-    final productsByCategory = productNotifier.productsByCategory;
-    final filterProductsMap = Map<String, List<ProductItem>>();
-
-    if (_search != null && _search!.length > 0) {
-      productsByCategory.forEach((key, value) {
-        final newList = <ProductItem>[];
-
-        value.forEach((element) {
-          if (element.name.toLowerCase().contains(_search!.toLowerCase())) {
-            newList.add(element);
-          }
-        });
-
-        if (newList.isNotEmpty) {
-          filterProductsMap[key] = newList;
-          filterCategoriesList.add(categories[key]!);
-        }
-      });
-    } else {
-      filterProductsMap.addAll(productsByCategory);
-      filterCategoriesList.addAll(categories.values);
-    }
+    final notifier = Provider.of<CategoryNotifier>(context);
+    final categories = notifier.categories.values.toList();
 
     return LoadingOverlay(
-      isLoading: notifier.isLoading,
+      isLoading: notifier.isLoading || _isLoading,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildPageTitle(context),
           CategoriesProductsItemList(
-            categories: filterCategoriesList,
-            products: filterProductsMap,
+            categories: categories,
+            products: _filteredProductsMap,
             cupboardUid: widget.cupboardId,
           ),
           _buildAddCategoryTitle(context),
@@ -119,110 +170,166 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Widget _buildPageTitle(BuildContext context) {
     final lb = Labels.of(context);
 
-    return Container(
-      height: 40,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            width: 300,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                suffixIcon: _buildSearchIconButton(),
-                hintText: lb.getMessage("search_label"),
-              ),
-              onEditingComplete: () {
-                setState(() {});
-              },
-              onChanged: (String? value) {
-                setState(() {
-                  _search = value;
-                });
-              },
-            ),
-          ),
-          VerticalDivider(
-            color: ArgonColors.muted,
-          ),
-          PopupMenuButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(Icons.view_comfortable_rounded, color: Colors.white),
-                  Text(
-                    lb.getMessage("view_options"),
-                    style: ArgonColors.titleWhite,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _buildSearchBar(lb),
+            VerticalDivider(color: ArgonColors.muted),
+            _buildMenuStatuFilter(),
+            //VerticalDivider(color: ArgonColors.muted),
+            //_buildViewOptionsMenu(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuStatuFilter() {
+    final productNotifier = Provider.of<ProductItemNotifier>(context);
+
+    final Map<InventoryStatus, GestureTapCallback> eventOptions = {
+      InventoryStatus.all: () {
+        setState(() {
+          _searchStatus = null;
+        });
+        productNotifier.filterProducts(_searchName, _searchStatus);
+
+        Navigator.of(context).pop();
+        print("all");
+      },
+      InventoryStatus.close_to_expire: () {
+        setState(() {
+          _searchStatus = InventoryStatus.close_to_expire;
+        });
+        productNotifier.filterProducts(_searchName, _searchStatus);
+
+        Navigator.of(context).pop();
+        print("close_to_expire");
+      },
+      InventoryStatus.expired: () {
+        setState(() {
+          _searchStatus = InventoryStatus.expired;
+        });
+        productNotifier.filterProducts(_searchName, _searchStatus);
+        Navigator.of(context).pop();
+        print("expired");
+      },
+      InventoryStatus.avalaible: () {
+        setState(() {
+          _searchStatus = InventoryStatus.avalaible;
+        });
+        productNotifier.filterProducts(_searchName, _searchStatus);
+        Navigator.of(context).pop();
+        print("avalaible");
+      },
+    };
+
+    return MenuStatusFilter(
+      products: productNotifier.filteredProductsList,
+      eventOptions: eventOptions,
+    );
+  }
+
+  Widget _buildViewOptionsMenu() {
+    final lb = Labels.of(context);
+
+    return PopupMenuButton(
+        tooltip: lb.getMessage("view_options"),
+        initialValue: _viewOptionSeleted,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Icon(Icons.view_comfortable_rounded, color: Colors.white),
+          ],
+        ),
+        itemBuilder: (context) => <PopupMenuEntry>[
+              PopupMenuItem(
+                value: 1,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.view_comfortable_rounded),
+                      SizedBox(width: 5),
+                      Text("Tiles"),
+                    ],
                   ),
-                ],
+                ),
               ),
-              itemBuilder: (context) => <PopupMenuEntry>[
-                    PopupMenuItem(
-                      value: 1,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.view_comfortable_rounded),
-                            SizedBox(width: 5),
-                            Text("Tiles"),
-                          ],
-                        ),
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 1,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.list),
-                            SizedBox(width: 5),
-                            Text("List"),
-                          ],
-                        ),
-                      ),
-                    ),
-                    PopupMenuDivider(),
-                    PopupMenuItem(
-                      value: 1,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text("Group items"),
-                            //SizedBox(width: 5),
-                            Switch(
-                                value: true,
-                                onChanged: (value) => print("tales")),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]),
-        ],
+              PopupMenuItem(
+                value: 2,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.list),
+                      SizedBox(width: 5),
+                      Text("List"),
+                    ],
+                  ),
+                ),
+              ),
+              PopupMenuDivider(),
+              PopupMenuItem(
+                value: 3,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Group items"),
+                      //SizedBox(width: 5),
+                      Switch(value: true, onChanged: (value) => print("tales")),
+                    ],
+                  ),
+                ),
+              ),
+            ]);
+  }
+
+  Widget _buildSearchBar(Labels lb) {
+    return Container(
+      width: 300,
+      child: TextField(
+        controller: _searchController,
+        decoration: InputDecoration(
+          suffixIcon: _buildSearchIconButton(),
+          hintText: lb.getMessage("search_label"),
+        ),
+        onChanged: (String? value) {
+          setState(() {
+            _searchName = value;
+          });
+          Provider.of<ProductItemNotifier>(context, listen: false)
+              .filterProducts(_searchName, _searchStatus);
+        },
       ),
     );
   }
 
   Widget _buildSearchIconButton() {
-    return _search != null && _search!.length > 0
+    return _searchName != null && _searchName!.length > 0
         ? IconButton(
             icon: Icon(Icons.cancel),
             onPressed: () {
               setState(() {
-                _search = null;
+                _searchName = null;
                 _searchController.clear();
               });
+              Provider.of<ProductItemNotifier>(context, listen: false)
+                  .filterProducts(_searchName, _searchStatus);
             },
           )
         : Icon(Icons.search_outlined);

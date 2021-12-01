@@ -34,7 +34,7 @@ final homeHandler = Handler(handlerFunc: (context, params) {
           ChangeNotifierProvider.value(value: notifier),
         ],
       ),
-      title: "Cupboards",
+      title: "My Cupboards",
       showNavBar: true,
     );
   } else {

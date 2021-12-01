@@ -65,6 +65,12 @@ class Labels {
       'delete_confirm': r'Do you want to delete $0?',
       'delete_successful': r'Delete successful',
       'search_add_label': 'What would you like to add?',
+      'add_cupboard': 'Add Cupboard',
+      'sign_out_label': 'Close',
+      'home_navbar_label': 'Home',
+      'categories_navbar_label': 'Shopping Cart',
+      'cart_navbar_label': 'Shopping Cart',
+      'profile_navbar_label': 'My Profile',
     },
     'es': {
       'title': 'Hola Mundo',
@@ -122,6 +128,12 @@ class Labels {
       'delete_confirm': r'¿Deseas eliminar $0?',
       'delete_successful': r'Eliminación exitosa',
       'search_add_label': '¿Qué te gustaría agregar?',
+      'add_cupboard': 'Agregar Alacena',
+      'sign_out_label': 'Cerrar',
+      'home_navbar_label': 'Inicio',
+      'categories_navbar_label': 'Categorías',
+      'cart_navbar_label': 'Carrito de compras',
+      'profile_navbar_label': 'Mi perfil',
     },
   };
 

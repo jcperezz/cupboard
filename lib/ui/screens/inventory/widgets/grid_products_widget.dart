@@ -22,13 +22,6 @@ class ProductsGrid extends StatelessWidget {
   final String? cupboardUid;
   final bool isSmallCard;
 
-  final Map<InventoryStatus, Color> _colors = UnmodifiableMapView({
-    InventoryStatus.pending: Colors.blue,
-    InventoryStatus.avalaible: Colors.green,
-    InventoryStatus.close_to_expire: Colors.yellow[900]!,
-    InventoryStatus.expired: Colors.red,
-  });
-
   ProductsGrid({
     Key? key,
     required this.products,
@@ -108,7 +101,7 @@ class ProductsGrid extends StatelessWidget {
           );
         },
         child: Card(
-          color: _colors[InventoryStatus.pending],
+          color: ArgonColors.color_by_status[InventoryStatus.pending],
           elevation: 0.4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -150,7 +143,7 @@ class ProductsGrid extends StatelessWidget {
           );
         },
         child: Card(
-          color: _colors[product.productStatus],
+          color: ArgonColors.color_by_status[product.productStatus],
           elevation: 0.4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(8.0)),

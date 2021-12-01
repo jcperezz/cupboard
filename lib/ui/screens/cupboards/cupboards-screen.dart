@@ -1,3 +1,4 @@
+import 'package:cupboard/ui/screens/cupboards/widgets/cupboard-card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -57,11 +58,9 @@ class CupboardsScreen extends StatelessWidget {
     Iterable<Cupboard> _cupboards = service.cupboards.values;
     Iterator<Cupboard> it = _cupboards.iterator;
 
-    return GridView.extent(
-      maxCrossAxisExtent: 300,
+    return GridView.count(
+      crossAxisCount: 2,
       padding: const EdgeInsets.all(4),
-      mainAxisSpacing: 2,
-      crossAxisSpacing: 2,
       children: [
         it.moveNext()
             ? _buildCard(context, it.current)
@@ -80,14 +79,9 @@ class CupboardsScreen extends StatelessWidget {
   }
 
   Widget _buildCard(BuildContext context, Cupboard data) {
-    final service = Provider.of<CupboardNotifier>(context);
-
-    return CardSmall(
-      cta: Labels.of(context).getMessage("show_products"),
-      title: "${data.name}",
-      image: AssetImage("assets/img/${data.image}"),
+    return CupboardCard(
+      cupboard: data,
       tap: () {
-        //service.selected = data;
         Navigator.of(context).pushNamed("/inventory/${data.id}");
       },
     );
@@ -95,6 +89,7 @@ class CupboardsScreen extends StatelessWidget {
 
   Widget _buildNewCupboard(BuildContext context) {
     final notifier = Provider.of<CupboardNotifier>(context);
+    final lb = Labels.of(context);
 
     return Container(
       child: MouseRegion(
@@ -126,11 +121,8 @@ class CupboardsScreen extends StatelessWidget {
                   flex: 1,
                   child: Center(
                     child: Text(
-                      "<Agregar Alacena>",
-                      style: TextStyle(
-                        color: ArgonColors.header,
-                        fontSize: 20,
-                      ),
+                      lb.getMessage("add_cupboard"),
+                      style: TextStyle(color: ArgonColors.header, fontSize: 20),
                     ),
                   ),
                 )
@@ -150,11 +142,6 @@ class CupboardsScreen extends StatelessWidget {
       animType: AnimType.BOTTOMSLIDE,
       dialogBackgroundColor: Colors.white,
       body: _BodyDialog(notifier: notifier, userUid: userUid),
-      // btnCancelOnPress: () {},
-      // btnOkText: "GUARDAR",
-      // btnCancelText: "CANCELAR",
-      // btnOkColor: Colors.blue,
-      // btnOkOnPress: () {},
     );
   }
 }

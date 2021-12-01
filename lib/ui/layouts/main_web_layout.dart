@@ -90,17 +90,19 @@ class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       backgroundColor: Colors.transparent,
-      centerTitle: false,
+      centerTitle: true,
       title: _buildTitle(context),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_outlined),
-        onPressed: Navigator.of(context).canPop()
-            ? () => Navigator.of(context).pop()
-            : null,
-      ),
+      leading: SizedBox.shrink(),
+      // leading: IconButton(
+      //   icon: const Icon(Icons.arrow_back_outlined),
+      //   onPressed: Navigator.of(context).canPop()
+      //       ? () => Navigator.of(context).pop()
+      //       : null,
+      // ),
       actions: [
         IconButton(
           icon: Icon(Icons.logout_outlined),
+          tooltip: Labels.of(context).getMessage("sign_out_label"),
           onPressed: () {
             service.signOut();
             Navigator.of(context).pushNamed("/");
@@ -124,10 +126,9 @@ class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
     return RichText(
       text: TextSpan(
         style: GoogleFonts.ptSans(
-            fontSize: 25, color: Theme.of(context).textTheme.headline1!.color),
+            fontSize: 20, color: Theme.of(context).textTheme.headline1!.color),
         children: <TextSpan>[
-          TextSpan(
-              text: title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: title),
         ],
       ),
     );
@@ -151,12 +152,16 @@ class BottomNavBar extends StatelessWidget {
         children: [
           IconButton(
             icon: Icon(Icons.home),
-            color: Colors.black,
-            onPressed: () {},
+            color: Colors.white,
+            tooltip: "Home",
+            onPressed: () {
+              Navigator.of(context).pushReplacementNamed("/home");
+            },
           ),
           IconButton(
-            icon: Icon(Icons.search),
-            color: Colors.black,
+            icon: Icon(Icons.category_rounded),
+            color: Colors.white,
+            tooltip: "Categories",
             onPressed: () {},
           ),
           SizedBox(
@@ -164,12 +169,14 @@ class BottomNavBar extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(Icons.add_shopping_cart),
-            color: Colors.black,
+            color: Colors.white,
+            tooltip: "Shopping Cart",
             onPressed: () {},
           ),
           IconButton(
             icon: Icon(Icons.account_box),
-            color: Colors.black,
+            color: Colors.white,
+            tooltip: "My Profile",
             onPressed: () {},
           ),
         ],

@@ -16,6 +16,10 @@ class ProductItemNotifier extends ChangeNotifier {
   bool isLoading = true;
   Map<String, ProductItem> products = Map();
   Map<String, List<ProductItem>> productsByCategory = Map();
+  Map<String, List<ProductItem>> filteredProductsMap = Map();
+
+  List<ProductItem> productsList = [];
+  List<ProductItem> filteredProductsList = [];
 
   ProductItemNotifier(this.userUid, this.cupboardUid,
       this.productItemRepository, this.productRepository) {
@@ -33,11 +37,51 @@ class ProductItemNotifier extends ChangeNotifier {
       if (!productsByCategory.containsKey(category)) {
         productsByCategory[category] = [];
       }
-
       productsByCategory[category]!.add(value);
+      productsList.add(value);
     });
 
+    await filterProducts();
+
     isLoading = false;
+    notifyListeners();
+  }
+
+  filterProducts([String? search, InventoryStatus? status]) {
+    filteredProductsMap.clear();
+    filteredProductsList.clear();
+
+    if ((search == null || search.isEmpty) && status == null) {
+      filteredProductsMap.addAll(productsByCategory);
+      productsByCategory.forEach((key, value) {
+        filteredProductsList.addAll(value);
+      });
+
+      return;
+    }
+
+    productsByCategory.forEach((key, value) {
+      final newList = <ProductItem>[];
+
+      value.forEach((element) {
+        bool isNameOk = true;
+        if (search != null && search.isNotEmpty)
+          isNameOk = element.name.toLowerCase().contains(search.toLowerCase());
+
+        bool isStatusOk = true;
+        if (status != null) isStatusOk = element.productStatus == status;
+
+        if (isNameOk && isStatusOk) {
+          newList.add(element);
+        }
+      });
+
+      if (newList.isNotEmpty) {
+        filteredProductsMap[key] = newList;
+        filteredProductsList.addAll(newList);
+      }
+    });
+
     notifyListeners();
   }
 

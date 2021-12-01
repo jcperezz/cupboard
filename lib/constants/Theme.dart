@@ -1,5 +1,7 @@
+import 'dart:collection';
 import 'dart:ui' show Color;
 
+import 'package:cupboard/domain/entities/product_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -60,4 +62,12 @@ class ArgonColors {
       GoogleFonts.openSans(color: Colors.white, fontWeight: FontWeight.bold);
 
   static DateFormat DATE_FORMAT_DB = DateFormat("d/M/yy");
+
+  static final Map<InventoryStatus, Color> color_by_status =
+      UnmodifiableMapView({
+    InventoryStatus.pending: Colors.indigo[900]!,
+    InventoryStatus.avalaible: Colors.teal[900]!,
+    InventoryStatus.close_to_expire: Colors.yellow[900]!,
+    InventoryStatus.expired: Colors.deepOrange[900]!,
+  });
 }

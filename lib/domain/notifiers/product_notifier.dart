@@ -12,6 +12,7 @@ class ProductNotifier extends ChangeNotifier {
   bool isLoading = true;
   Map<String, Product> products = Map();
   Map<String, List<Product>> productsByCategory = Map();
+  List<Product> productsList = [];
 
   ProductNotifier(this.userUid, this.cupboardUid, this.repository) {
     getAll();
@@ -21,6 +22,7 @@ class ProductNotifier extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     products = await repository.getAll(cupboardUid);
+    productsList.clear();
 
     products.forEach((key, value) {
       String category = value.category!;
@@ -30,6 +32,7 @@ class ProductNotifier extends ChangeNotifier {
       }
 
       productsByCategory[category]!.add(value);
+      productsList.add(value);
     });
 
     isLoading = false;
