@@ -1,4 +1,6 @@
 import 'package:cupboard/domain/entities/cupboard.dart';
+import 'package:cupboard/domain/entities/product_item.dart';
+import 'package:cupboard/locale/labels.dart';
 import 'package:flutter/material.dart';
 import 'package:cupboard/constants/Theme.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,32 +41,52 @@ class CupboardCard extends StatelessWidget {
                     )
                   ],
                 ),
-                // Align(
-                //   alignment: Alignment.topRight,
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Column(
-                //       children: [
-                //         Text(
-                //           "${cupboard.name}",
-                //           style: TextStyle(
-                //               color: ArgonColors.white,
-                //               fontSize: 20,
-                //               fontWeight: FontWeight.bold),
-                //         ),
-                //         Text(
-                //           "10 items",
-                //           style: TextStyle(
-                //               color: Colors.white, backgroundColor: Colors.red),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // )
+                _buildCountDetails(context),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCountDetails(BuildContext context) {
+    final lb = Labels.of(context);
+    print("${Alignment.bottomRight.x} ${Alignment.bottomRight.y}");
+
+    return Align(
+      alignment: Alignment(1, 0.19),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Container(
+          height: 70,
+          child: Card(
+            color: Colors.grey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildTextStatusCount(
+                    Colors.red, lb.getMessage("count_inventory_all", [10])),
+                _buildTextStatusCount(Colors.blue,
+                    lb.getMessage("count_inventory_close_to_expire", [10])),
+                _buildTextStatusCount(Colors.green,
+                    lb.getMessage("count_inventory_expired", [10])),
+                //SizedBox(height: 45)
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Padding _buildTextStatusCount(Color color, String label) {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Text(
+        label,
+        style: TextStyle(color: Colors.white, backgroundColor: color),
       ),
     );
   }
@@ -88,7 +110,7 @@ class CupboardCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "${cupboard.name} [ ${cupboard.count} ítems ]",
+                  "${cupboard.name}",
                   style: GoogleFonts.openSans(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

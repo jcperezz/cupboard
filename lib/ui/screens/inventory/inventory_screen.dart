@@ -4,6 +4,7 @@ import 'package:cupboard/domain/entities/product_item.dart';
 import 'package:cupboard/domain/notifiers/product_notifier.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/grid_categories_widget.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/search_product.dart';
+import 'package:cupboard/ui/widgets/empty_background.dart';
 import 'package:cupboard/ui/widgets/menu_status_filter.dart';
 
 import 'package:flutter/material.dart';
@@ -93,77 +94,40 @@ class _InventoryScreenState extends State<InventoryScreen> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 80),
-        child: _buildBody(context),
+        child: _buildLoadingBody(context),
       ),
     );
   }
 
-  Widget _buildRail() {
-    return NavigationRail(
-      selectedIndex: 0,
-      backgroundColor: Colors.transparent,
-      onDestinationSelected: (int index) {
-        setState(() {});
-      },
-      labelType: NavigationRailLabelType.all,
-      leading: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(icon: Icon(Icons.ac_unit_sharp), onPressed: null),
-          Divider(
-            color: Colors.white,
-            height: 10,
-            thickness: 10,
-          ),
-          IconButton(icon: Icon(Icons.ac_unit_sharp), onPressed: null),
-        ],
-      ),
-      trailing: IconButton(icon: Icon(Icons.ac_unit_sharp), onPressed: null),
-      //groupAlignment: 1,
-      destinations: const <NavigationRailDestination>[
-        NavigationRailDestination(
-          icon: Icon(Icons.favorite_border),
-          selectedIcon: Icon(Icons.favorite),
-          label: Text('First'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.bookmark_border),
-          selectedIcon: Icon(Icons.book),
-          label: Text('Second'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.star_border),
-          selectedIcon: Icon(Icons.star),
-          label: Text('Third'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.category_outlined),
-          selectedIcon: Icon(Icons.star),
-          label: Text('Add Category'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBody(BuildContext context) {
+  Widget _buildLoadingBody(BuildContext context) {
     final notifier = Provider.of<CategoryNotifier>(context);
     final categories = notifier.categories.values.toList();
 
     return LoadingOverlay(
       isLoading: notifier.isLoading || _isLoading,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPageTitle(context),
-          CategoriesProductsItemList(
-            categories: categories,
-            products: _filteredProductsMap,
-            cupboardUid: widget.cupboardId,
-          ),
-          _buildAddCategoryTitle(context),
-        ],
-      ),
+      child: _buildBody(context, categories),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, List<Category> categories) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildPageTitle(context),
+        _buildBodyItems(categories),
+        _buildAddCategoryTitle(context),
+      ],
+    );
+  }
+
+  Widget _buildBodyItems(List<Category> categories) {
+    if (_filteredProductsMap.isEmpty)
+      return Expanded(child: EmptyBackground(keyMessage: "empty_cupboard"));
+
+    return CategoriesProductsItemList(
+      categories: categories,
+      products: _filteredProductsMap,
+      cupboardUid: widget.cupboardId,
     );
   }
 
@@ -300,21 +264,25 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   Widget _buildSearchBar(Labels lb) {
-    return Container(
-      width: 300,
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          suffixIcon: _buildSearchIconButton(),
-          hintText: lb.getMessage("search_label"),
+    return Flexible(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 300),
+        child: Container(
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              suffixIcon: _buildSearchIconButton(),
+              hintText: lb.getMessage("search_label"),
+            ),
+            onChanged: (String? value) {
+              setState(() {
+                _searchName = value;
+              });
+              Provider.of<ProductItemNotifier>(context, listen: false)
+                  .filterProducts(_searchName, _searchStatus);
+            },
+          ),
         ),
-        onChanged: (String? value) {
-          setState(() {
-            _searchName = value;
-          });
-          Provider.of<ProductItemNotifier>(context, listen: false)
-              .filterProducts(_searchName, _searchStatus);
-        },
       ),
     );
   }

@@ -65,6 +65,7 @@ class ArgonColors {
 
   static final Map<InventoryStatus, Color> color_by_status =
       UnmodifiableMapView({
+    InventoryStatus.all: Colors.indigo[900]!,
     InventoryStatus.pending: Colors.indigo[900]!,
     InventoryStatus.avalaible: Colors.teal[900]!,
     InventoryStatus.close_to_expire: Colors.yellow[900]!,

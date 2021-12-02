@@ -39,12 +39,23 @@ class MainWebLayout extends StatelessWidget {
     return Stack(
       children: [
         _buildBackground(),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          SizedBox(
-            width: 600,
-            child: _wrapScafold(context),
-          ),
-        ]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 600, minWidth: 360),
+                child: Container(
+                  child: _wrapScafold(context),
+                ),
+              ),
+            ),
+            // SizedBox(
+            //   width: 600,
+            //   child: _wrapScafold(context),
+            // ),
+          ],
+        ),
       ],
     );
   }

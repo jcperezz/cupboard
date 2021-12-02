@@ -1,6 +1,7 @@
-import 'package:cupboard/ui/screens/cupboards/widgets/cupboard-card.dart';
+import 'package:cupboard/ui/widgets/empty_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:provider/provider.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -17,9 +18,9 @@ import 'package:cupboard/constants/Theme.dart';
 
 //widgets
 import 'package:cupboard/widgets/button.dart';
-import 'package:cupboard/widgets/card-small.dart';
 import 'package:cupboard/widgets/form-input.dart';
-import 'package:cupboard/widgets/image-slider.dart';
+import 'package:cupboard/ui/screens/cupboards/widgets/image-slider.dart';
+import 'package:cupboard/ui/screens/cupboards/widgets/card-cupboard.dart';
 
 class CupboardsScreen extends StatelessWidget {
   final String userUid;
@@ -28,25 +29,25 @@ class CupboardsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildPageBody(context);
+    return SafeArea(child: _buildPageBody(context));
   }
 
   Widget _buildPageBody(BuildContext context) {
     final service = Provider.of<CupboardNotifier>(context);
 
     return LoadingOverlay(
-      child: _buildSafeArea(context),
       isLoading: service.isLoading,
-    );
-  }
-
-  Widget _buildSafeArea(BuildContext context) {
-    return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(top: 16.0),
         child: Container(
-          padding: EdgeInsets.only(left: 24.0, right: 24.0),
-          child: _buildGrid(context),
+          child: Column(
+            children: [
+              _buildAddCategoryTitle(context),
+              Expanded(
+                child: _buildGrid(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -56,78 +57,46 @@ class CupboardsScreen extends StatelessWidget {
     final service = Provider.of<CupboardNotifier>(context);
 
     Iterable<Cupboard> _cupboards = service.cupboards.values;
-    Iterator<Cupboard> it = _cupboards.iterator;
 
-    return GridView.count(
-      crossAxisCount: 2,
-      padding: const EdgeInsets.all(4),
-      children: [
-        it.moveNext()
-            ? _buildCard(context, it.current)
-            : _buildNewCupboard(context),
-        it.moveNext()
-            ? _buildCard(context, it.current)
-            : _buildNewCupboard(context),
-        it.moveNext()
-            ? _buildCard(context, it.current)
-            : _buildNewCupboard(context),
-        it.moveNext()
-            ? _buildCard(context, it.current)
-            : _buildNewCupboard(context),
-      ],
-    );
-  }
-
-  Widget _buildCard(BuildContext context, Cupboard data) {
-    return CupboardCard(
-      cupboard: data,
-      tap: () {
-        Navigator.of(context).pushNamed("/inventory/${data.id}");
-      },
-    );
-  }
-
-  Widget _buildNewCupboard(BuildContext context) {
-    final notifier = Provider.of<CupboardNotifier>(context);
-    final lb = Labels.of(context);
+    if (_cupboards.isEmpty)
+      return EmptyBackground(keyMessage: "empty_cupboards");
 
     return Container(
+      child: GridView.count(
+        crossAxisCount: 1,
+        childAspectRatio: 2.75,
+        mainAxisSpacing: 10,
+        padding: const EdgeInsets.all(4),
+        children: _cupboards
+            .map((e) => CardCupboard(
+                  cupboard: e,
+                  onTap: () =>
+                      Navigator.of(context).pushNamed("/inventory/${e.id}"),
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _buildAddCategoryTitle(BuildContext context) {
+    final notifier = Provider.of<CupboardNotifier>(context);
+
+    return Container(
+      height: 45,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
-          onTap: () {
-            _buildDialog(context, notifier).show();
-          },
-          child: Card(
-            elevation: 0.4,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: Center(
-                    child: FittedBox(
-                      child: Icon(
-                        Icons.add_circle,
-                        size: 200,
-                        color: Colors.blue[300],
-                      ),
-                    ),
-                  ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Center(
-                    child: Text(
-                      lb.getMessage("add_cupboard"),
-                      style: TextStyle(color: ArgonColors.header, fontSize: 20),
-                    ),
-                  ),
-                )
-              ],
-            ),
+          onTap: () => _buildDialog(context, notifier).show(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.add, color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(Labels.of(context).getMessage("new_cupboard"),
+                    style: ArgonColors.titleWhite),
+              ),
+            ],
           ),
         ),
       ),

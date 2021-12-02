@@ -1,5 +1,9 @@
-import 'package:cupboard/data/services/authentication_service.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+
+import 'package:cupboard/data/services/authentication_service.dart';
+import 'package:desktop_window/desktop_window.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,6 +22,12 @@ import 'package:cupboard/services/notifications_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    DesktopWindow.setMinWindowSize(const Size(360, 640));
+    DesktopWindow.setMaxWindowSize(Size.infinite);
+  }
+
   SharedPreferencesService.instance;
   DI.setup();
   RouterManager.configureRoutes();

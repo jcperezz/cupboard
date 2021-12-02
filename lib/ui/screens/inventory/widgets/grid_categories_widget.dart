@@ -120,20 +120,28 @@ class _CategoriesProductsItemListState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            width: 300,
-            child: Text("${category.name}",
-                style: ArgonColors.expandedTitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis),
+          Flexible(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 300),
+              child: Container(
+                child: Text("${category.name}",
+                    style: ArgonColors.expandedTitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+              ),
+            ),
           ),
-          if (productList == null)
-            Text(lb.getMessage("empty_label"),
-                style: ArgonColors.expandedSubTitle),
-          if (productList != null)
-            Text(lb.getMessage("count_item_label", [productList.length]),
-                style: ArgonColors.expandedSubTitle),
-          VerticalDivider(),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              productList == null
+                  ? lb.getMessage("empty_label")
+                  : lb.getMessage("count_item_label", [productList.length]),
+              style: ArgonColors.expandedSubTitle,
+            ),
+          ),
+
+          //VerticalDivider(),
         ],
       ),
     );

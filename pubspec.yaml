@@ -25,6 +25,7 @@ dependencies:
   carousel_slider: ^4.0.0
   collapsible_sidebar: ^2.0.1+2
   cupertino_icons: ^1.0.2
+  desktop_window: ^0.4.0
   dio: ^4.0.1
   dropdown_search: ^2.0.1
   expansion_tile_card: ^2.0.0
@@ -65,13 +66,12 @@ flutter:
     - assets/img/avalaibles.png
     - assets/img/close_to_expire.png
     - assets/img/expired.png
-    - assets/img/pending.png
-    - assets/img/cupboard-gray.png
-    - assets/img/cupboard-blue.png
-    - assets/img/cupboard-2.png
-    - assets/img/Choice-pana.png
-    - assets/img/Coffee-shop-amico.png
-    - assets/img/Coffee-shop-pana.png
+    - assets/img/empty.png
+    - assets/img/cupboard-01.png
+    - assets/img/cupboard-02.png
+    - assets/img/cupboard-03.png
+    - assets/img/cupboard-04.png
+    - assets/img/cupboard-05.png
     - assets/img/profile.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
