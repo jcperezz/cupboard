@@ -1,10 +1,12 @@
-import 'package:cupboard/constants/images.dart';
+import 'package:cupboard/locale/labels.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:cupboard/constants/Theme.dart';
-import 'package:cupboard/locale/labels.dart';
+import 'package:cupboard/constants/images.dart';
+
+import 'package:cupboard/ui/widgets/localization_text.dart';
 
 import 'package:cupboard/domain/entities/cupboard.dart';
 import 'package:cupboard/domain/entities/product_item.dart';
@@ -12,8 +14,10 @@ import 'package:cupboard/domain/entities/product_item.dart';
 class CardCupboard extends StatelessWidget {
   final Cupboard cupboard;
   final GestureTapCallback? onTap;
+  final VoidCallback? editEvent;
 
-  const CardCupboard({Key? key, required this.cupboard, this.onTap})
+  const CardCupboard(
+      {Key? key, required this.cupboard, this.onTap, this.editEvent})
       : super(key: key);
 
   @override
@@ -22,7 +26,25 @@ class CardCupboard extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: onTap,
-        child: _buildNewCard(cupboard, context),
+        child: Stack(children: [
+          _buildCard(cupboard, context),
+          _builDeteleButon(context),
+        ]),
+      ),
+    );
+  }
+
+  Align _builDeteleButon(BuildContext context) {
+    return Align(
+      alignment: Alignment(1, -1),
+      child: IconButton(
+        icon: Icon(
+          Icons.settings,
+          color: ArgonColors.initial,
+        ),
+        tooltip: Labels.of(context).getMessage("edit_cupboard"),
+        iconSize: 30,
+        onPressed: editEvent,
       ),
     );
   }
@@ -35,8 +57,7 @@ class CardCupboard extends StatelessWidget {
     );
   }
 
-  Widget _buildNewCard(Cupboard cupboard, BuildContext context) {
-    final lb = Labels.of(context);
+  Widget _buildCard(Cupboard cupboard, BuildContext context) {
     final colors = MyImages.cupboard_images[cupboard.image];
 
     return Container(
@@ -54,24 +75,15 @@ class CardCupboard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${cupboard.name}",
-                        style: GoogleFonts.openSans(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                        )),
+                    _buildTitle(cupboard),
+                    _buildTextStatusCount(InventoryStatus.all,
+                        "count_inventory_all", cupboard.totalItems),
                     _buildTextStatusCount(
-                        lb.getMessage(
-                            "count_inventory_all", [cupboard.totalItems]),
-                        InventoryStatus.all),
-                    _buildTextStatusCount(
-                        lb.getMessage("count_inventory_close_to_expire",
-                            [cupboard.totalCloseToExpire]),
-                        InventoryStatus.close_to_expire),
-                    _buildTextStatusCount(
-                        lb.getMessage(
-                            "count_inventory_expired", [cupboard.totalExpired]),
-                        InventoryStatus.expired),
+                        InventoryStatus.close_to_expire,
+                        "count_inventory_close_to_expire",
+                        cupboard.totalCloseToExpire),
+                    _buildTextStatusCount(InventoryStatus.expired,
+                        "count_inventory_expired", cupboard.totalExpired),
                     Expanded(child: const SizedBox.shrink()),
                     _buildCollaboratorsDetail(),
                   ],
@@ -79,18 +91,7 @@ class CardCupboard extends StatelessWidget {
               ),
             ),
             Flexible(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 300),
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topRight,
-                      image: AssetImage("assets/img/${cupboard.image}"),
-                    ),
-                  ),
-                ),
-              ),
+              child: _buildImage(cupboard),
             ),
           ],
         ),
@@ -98,18 +99,47 @@ class CardCupboard extends StatelessWidget {
     );
   }
 
-  Widget _buildTextStatusCount(String label, InventoryStatus status) {
+  Widget _buildImage(Cupboard cupboard) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 300),
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            alignment: Alignment.topRight,
+            image: AssetImage("assets/img/${cupboard.image}"),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(Cupboard cupboard) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          "${cupboard.name}",
+          style: GoogleFonts.openSans(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextStatusCount(
+      InventoryStatus status, String label, int total) {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.only(left: 4, top: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Icon(Icons.info, color: ArgonColors.color_by_status[status]),
           SizedBox(width: 5),
-          Text(
-            label,
-            style: GoogleFonts.openSans(color: Colors.white),
-          ),
+          LocaleText.white(label, args: [total]),
         ],
       ),
     );

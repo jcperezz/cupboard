@@ -14,12 +14,12 @@ class FireCupboardRepository extends AbstractFireRepository<Cupboard> {
 
   @override
   Future<String> add(Cupboard entity) async {
-    DatabaseReference db = getCurrentUserPath().push();
+    DatabaseReference db = getDb().child(path).push();
     await db.set(entity.toMap());
     String keyNewCupboard = db.key;
 
-    await getCurrentUserPath(entity.owner)
-        .push()
+    await getDb(entity.owner)
+        .child("$path/$keyNewCupboard")
         .set(UserCupboard(key: keyNewCupboard, name: entity.name).toMap());
 
     return keyNewCupboard;
@@ -36,7 +36,10 @@ class FireCupboardRepository extends AbstractFireRepository<Cupboard> {
     if (user.cupboards != null) {
       for (var userCupboard in user.cupboards!) {
         Cupboard? c = await getById(userCupboard.key);
-        if (c != null) list[userCupboard.key] = c;
+        if (c != null) {
+          c.owner = userUid;
+          list[userCupboard.key] = c;
+        }
       }
     }
 
@@ -60,19 +63,22 @@ class FireCupboardRepository extends AbstractFireRepository<Cupboard> {
 
   @override
   Future<void> populate(String uid) {
-    // TODO: implement populate
     throw UnimplementedError();
   }
 
   @override
-  Future<void> remove(Cupboard entity) {
-    // TODO: implement remove
-    throw UnimplementedError();
+  Future<void> remove(Cupboard entity) async {
+    DatabaseReference db = getDb().child("$path/${entity.id}");
+    await db.remove();
+
+    print("owner ${entity.owner}");
+
+    await getDb(entity.owner).child("$path/${entity.id}").remove();
   }
 
   @override
-  Future<void> update(Cupboard entity) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update(Cupboard entity) async {
+    DatabaseReference db = getDb().child("$path/${entity.id}");
+    await db.set(entity.toMap());
   }
 }

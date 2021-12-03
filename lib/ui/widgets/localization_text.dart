@@ -1,6 +1,7 @@
 import 'package:cupboard/constants/Theme.dart';
 import 'package:cupboard/locale/labels.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LocaleText extends StatelessWidget {
   final String label;
@@ -15,6 +16,13 @@ class LocaleText extends StatelessWidget {
 
   LocaleText.title(this.label, {this.args, this.maxLines, this.overflow})
       : style = ArgonColors.title;
+
+  LocaleText.white(this.label, {this.args, this.maxLines, this.overflow})
+      : style = GoogleFonts.openSans(color: Colors.white);
+
+  LocaleText.color(this.label,
+      {this.args, this.maxLines, this.overflow, Color color = Colors.white})
+      : style = GoogleFonts.openSans(color: color);
 
   @override
   Widget build(BuildContext context) {

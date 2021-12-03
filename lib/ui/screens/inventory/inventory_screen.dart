@@ -1,5 +1,3 @@
-import 'package:collapsible_sidebar/collapsible_sidebar.dart';
-import 'package:cupboard/domain/entities/product.dart';
 import 'package:cupboard/domain/entities/product_item.dart';
 import 'package:cupboard/domain/notifiers/product_notifier.dart';
 import 'package:cupboard/ui/screens/inventory/widgets/grid_categories_widget.dart';

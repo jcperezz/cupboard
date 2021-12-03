@@ -2,6 +2,8 @@ import 'package:cupboard/domain/entities/category.dart';
 import 'package:cupboard/domain/entities/cupboard.dart';
 import 'package:cupboard/domain/entities/product.dart';
 import 'package:cupboard/domain/repositories/abstract_repository.dart';
+import 'package:cupboard/locale/labels.dart';
+import 'package:cupboard/services/notifications_service.dart';
 import 'package:flutter/material.dart';
 
 class CupboardNotifier extends ChangeNotifier {
@@ -33,6 +35,22 @@ class CupboardNotifier extends ChangeNotifier {
     String parentUid = await cupboardRepository.add(cupboard);
     await categoryRepository.populate(parentUid);
     await productRepository.populate(parentUid);
+    await getAll();
+    notifyListeners();
+  }
+
+  Future<void> update(Cupboard cupboard) async {
+    isLoading = true;
+    notifyListeners();
+    await cupboardRepository.update(cupboard);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> remove(Cupboard cupboard, BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
+    await cupboardRepository.remove(cupboard);
     await getAll();
   }
 }

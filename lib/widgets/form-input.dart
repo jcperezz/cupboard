@@ -19,6 +19,7 @@ class FormInput extends StatelessWidget {
   final bool readOnly;
   final String? initialValue;
   final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
 
   FormInput({
     this.placeholder,
@@ -36,6 +37,7 @@ class FormInput extends StatelessWidget {
     this.readOnly = false,
     this.initialValue,
     this.inputFormatters,
+    this.maxLength,
   });
 
   @override
@@ -53,6 +55,7 @@ class FormInput extends StatelessWidget {
       readOnly: readOnly,
       initialValue: initialValue,
       inputFormatters: inputFormatters,
+      maxLength: maxLength,
       style:
           TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
       textAlignVertical: TextAlignVertical(y: 0.6),

@@ -8,12 +8,10 @@ class FireProductRepository extends AbstractFireRepository<Product> {
   @override
   Future<String> add(Product entity) async {
     final DatabaseReference db = getDb();
-    await db
-        .child("cupboards/${entity.cupboardUid}")
-        .child(path)
-        .push()
-        .set(entity.toMap());
-    return db.key;
+    db.child("cupboards/${entity.cupboardUid}").child(path).push();
+    await db.set(entity.toMap());
+
+    return "";
   }
 
   @override
@@ -27,11 +25,13 @@ class FireProductRepository extends AbstractFireRepository<Product> {
     if (snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;
 
-      list = response
-          .map((key, value) => new MapEntry(key, Product.fromMap(key, value)));
+      response.forEach((key, value) {
+        print("$value");
+        list[key] = Product.fromMap(key, value);
+      });
     }
 
-    return UnmodifiableMapView(list);
+    return list;
   }
 
   @override

@@ -90,7 +90,8 @@ class ProductItemNotifier extends ChangeNotifier {
     notifyListeners();
 
     await productItemRepository.add(product);
-    //productRepository.add(product); TODO agregar al catalogo evitando duplicados
+    productRepository.add(Product.fromItem(
+        product)); //TODO agregar al catalogo evitando duplicados
 
     isLoading = false;
     notifyListeners();

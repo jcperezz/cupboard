@@ -50,10 +50,6 @@ class MainWebLayout extends StatelessWidget {
                 ),
               ),
             ),
-            // SizedBox(
-            //   width: 600,
-            //   child: _wrapScafold(context),
-            // ),
           ],
         ),
       ],
@@ -112,6 +108,12 @@ class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
       // ),
       actions: [
         IconButton(
+          icon: Icon(Icons.account_box),
+          color: Colors.white,
+          tooltip: "My Profile",
+          onPressed: () {},
+        ),
+        IconButton(
           icon: Icon(Icons.logout_outlined),
           tooltip: Labels.of(context).getMessage("sign_out_label"),
           onPressed: () {
@@ -156,6 +158,7 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lb = Labels.of(context);
     return BottomAppBar(
       shape: CircularNotchedRectangle(),
       child: Row(
@@ -164,30 +167,32 @@ class BottomNavBar extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.home),
             color: Colors.white,
-            tooltip: "Home",
+            tooltip: lb.getMessage("home_navbar_label"),
             onPressed: () {
               Navigator.of(context).pushReplacementNamed("/home");
             },
           ),
           IconButton(
-            icon: Icon(Icons.category_rounded),
+            icon: Icon(Icons.list),
             color: Colors.white,
-            tooltip: "Categories",
-            onPressed: () {},
+            tooltip: lb.getMessage("inventory_navbar_label"),
+            onPressed: () {
+              Navigator.of(context).pushReplacementNamed("/home");
+            },
           ),
           SizedBox(
             width: 40,
           ),
           IconButton(
-            icon: Icon(Icons.add_shopping_cart),
+            icon: Icon(Icons.category_rounded),
             color: Colors.white,
-            tooltip: "Shopping Cart",
+            tooltip: lb.getMessage("catalog_navbar_label"),
             onPressed: () {},
           ),
           IconButton(
-            icon: Icon(Icons.account_box),
+            icon: Icon(Icons.add_shopping_cart),
             color: Colors.white,
-            tooltip: "My Profile",
+            tooltip: lb.getMessage("cart_navbar_label"),
             onPressed: () {},
           ),
         ],

@@ -39,6 +39,16 @@ class Button extends StatelessWidget {
           icon: icon,
         );
 
+  const Button.important(
+      {required String keyMessage, VoidCallback? onPressed, IconData? icon})
+      : this(
+          keyMessage: keyMessage,
+          onPressed: onPressed,
+          primary: Colors.redAccent,
+          textColor: ArgonColors.white,
+          icon: icon,
+        );
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -52,6 +62,7 @@ class Button extends StatelessWidget {
           padding:
               EdgeInsets.only(left: 16.0, right: 16.0, top: 12, bottom: 12),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icon != null) Icon(FontAwesomeIcons.github, size: 13),
               if (icon != null) SizedBox(width: 5),

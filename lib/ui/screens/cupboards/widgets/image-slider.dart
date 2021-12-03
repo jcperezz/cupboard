@@ -1,9 +1,12 @@
 import 'package:cupboard/constants/Theme.dart';
+import 'package:cupboard/ui/widgets/localization_text.dart';
 import 'package:flutter/material.dart';
 
 class ImagesSlider extends StatefulWidget {
   final Map<String, List<Color>> images;
+  final String? selected;
   final String? title;
+  final Color? titleColor;
   final Function(String)? onTap;
 
   const ImagesSlider({
@@ -11,6 +14,8 @@ class ImagesSlider extends StatefulWidget {
     required this.images,
     this.onTap,
     this.title,
+    this.selected,
+    this.titleColor,
   }) : super(key: key);
 
   @override
@@ -24,6 +29,7 @@ class _ImagesSliderState extends State<ImagesSlider> {
   @override
   void initState() {
     super.initState();
+    _imageSelected = widget.selected;
   }
 
   @override
@@ -52,9 +58,9 @@ class _ImagesSliderState extends State<ImagesSlider> {
           if (this.widget.title != null)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text(
+              child: LocaleText.color(
                 this.widget.title!,
-                style: TextStyle(color: ArgonColors.text, fontSize: 16.0),
+                color: widget.titleColor ?? Colors.white,
               ),
             ),
           SizedBox(
@@ -80,8 +86,7 @@ class _ImagesSliderState extends State<ImagesSlider> {
                       _imageSelected = value;
                     });
                   },
-                  isSelect: _imageSelected != null &&
-                      _imageSelected == widget.images.keys.toList()[index],
+                  isSelect: _imageSelected != null && _imageSelected == image,
                 );
               },
             ),
@@ -118,28 +123,36 @@ class _ImagePoster extends StatelessWidget {
             },
             child: Card(
               elevation: 5,
-              shape: RoundedRectangleBorder(
-                  side: isSelect
-                      ? BorderSide(color: Colors.blue, width: 3)
-                      : BorderSide(color: Colors.grey),
-                  borderRadius: ArgonColors.card_border),
+              shape: _buildBorder(),
               child: Container(
                 width: double.infinity,
                 height: 200,
-                decoration: BoxDecoration(
-                  gradient: _buildGradient(colors),
-                  borderRadius: ArgonColors.card_border,
-                  image: DecorationImage(
-                    image: AssetImage("assets/img/$image"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                decoration: _buildDecoration(),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Decoration _buildDecoration() {
+    return BoxDecoration(
+      gradient: _buildGradient(colors),
+      borderRadius: ArgonColors.card_border,
+      image: DecorationImage(
+        image: AssetImage("assets/img/$image"),
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  ShapeBorder _buildBorder() {
+    return RoundedRectangleBorder(
+        side: isSelect
+            ? BorderSide(color: Colors.blue, width: 3)
+            : BorderSide(color: Colors.grey),
+        borderRadius: ArgonColors.card_border);
   }
 
   Gradient _buildGradient(List<Color> colors) {
