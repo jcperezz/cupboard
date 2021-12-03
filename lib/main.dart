@@ -105,8 +105,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       onGenerateRoute: RouterManager.router.generator,
       scaffoldMessengerKey: NotificationsService.messengerKey,
-      theme:
-          ThemeData.dark().copyWith(cardTheme: CardTheme(color: Colors.white)),
+      theme: _getTheme(),
       localizationsDelegates: const [
         LabelsDelegate(),
         GlobalMaterialLocalizations.delegate,
@@ -118,4 +117,7 @@ class MyApp extends StatelessWidget {
       ],
     );
   }
+
+  ThemeData _getTheme() =>
+      ThemeData.dark().copyWith(cardTheme: CardTheme(color: Colors.white));
 }

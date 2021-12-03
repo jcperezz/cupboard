@@ -1,3 +1,4 @@
+import 'package:cupboard/locale/labels.dart';
 import 'package:flutter/material.dart';
 import 'package:cupboard/constants/Theme.dart';
 import 'package:flutter/services.dart';
@@ -40,37 +41,38 @@ class FormInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        cursorColor: ArgonColors.muted,
-        onTap: onTap,
-        onChanged: onChanged,
-        controller: controller,
-        autofocus: autofocus,
-        validator: validator,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        textCapitalization: textCapitalization,
-        readOnly: readOnly,
-        initialValue: initialValue,
-        inputFormatters: inputFormatters,
-        style:
-            TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
-        textAlignVertical: TextAlignVertical(y: 0.6),
-        decoration: InputDecoration(
-            filled: true,
-            fillColor: ArgonColors.white,
-            hintStyle: TextStyle(
-              color: ArgonColors.muted,
-            ),
-            suffixIcon: suffixIcon,
-            prefixIcon: prefixIcon,
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
-                    color: borderColor, width: 1.0, style: BorderStyle.solid)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
-                    color: borderColor, width: 1.0, style: BorderStyle.solid)),
-            hintText: placeholder));
+      cursorColor: ArgonColors.muted,
+      onTap: onTap,
+      onChanged: onChanged,
+      controller: controller,
+      autofocus: autofocus,
+      validator: validator,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      textCapitalization: textCapitalization,
+      readOnly: readOnly,
+      initialValue: initialValue,
+      inputFormatters: inputFormatters,
+      style:
+          TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
+      textAlignVertical: TextAlignVertical(y: 0.6),
+      decoration: InputDecoration(
+          filled: true,
+          fillColor: ArgonColors.white,
+          hintStyle: TextStyle(
+            color: ArgonColors.muted,
+          ),
+          suffixIcon: suffixIcon,
+          prefixIcon: prefixIcon,
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              borderSide: BorderSide(
+                  color: borderColor, width: 1.0, style: BorderStyle.solid)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              borderSide: BorderSide(
+                  color: borderColor, width: 1.0, style: BorderStyle.solid)),
+          hintText: Labels.of(context).getMessage(placeholder)),
+    );
   }
 }

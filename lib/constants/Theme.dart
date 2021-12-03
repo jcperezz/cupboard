@@ -47,6 +47,9 @@ class ArgonColors {
   static const BorderRadius card_border =
       BorderRadius.all(Radius.circular(8.0));
 
+  static TextStyle get title => GoogleFonts.openSans(
+      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20);
+
   static TextStyle get titleWhite =>
       GoogleFonts.openSans(color: Colors.white, fontWeight: FontWeight.bold);
 

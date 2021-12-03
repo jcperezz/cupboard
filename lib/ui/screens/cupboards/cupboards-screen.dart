@@ -1,7 +1,6 @@
-import 'package:cupboard/ui/widgets/empty_background.dart';
+import 'package:cupboard/locale/labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:provider/provider.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -9,7 +8,6 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 
 import 'package:cupboard/domain/notifiers/cupboard_notifier.dart';
 
-import 'package:cupboard/locale/labels.dart';
 import 'package:cupboard/domain/entities/cupboard.dart';
 
 import 'package:cupboard/constants/images.dart';
@@ -21,6 +19,8 @@ import 'package:cupboard/widgets/button.dart';
 import 'package:cupboard/widgets/form-input.dart';
 import 'package:cupboard/ui/screens/cupboards/widgets/image-slider.dart';
 import 'package:cupboard/ui/screens/cupboards/widgets/card-cupboard.dart';
+import 'package:cupboard/ui/widgets/empty_background.dart';
+import 'package:cupboard/ui/widgets/localization_text.dart';
 
 class CupboardsScreen extends StatelessWidget {
   final String userUid;
@@ -93,8 +93,7 @@ class CupboardsScreen extends StatelessWidget {
               Icon(Icons.add, color: Colors.white),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(Labels.of(context).getMessage("new_cupboard"),
-                    style: ArgonColors.titleWhite),
+                child: LocaleText.title("new_cupboard"), // TODO
               ),
             ],
           ),
@@ -109,7 +108,7 @@ class CupboardsScreen extends StatelessWidget {
       width: MediaQuery.of(context).size.width * (kIsWeb ? 0.35 : 0.75),
       dialogType: DialogType.NO_HEADER,
       animType: AnimType.BOTTOMSLIDE,
-      dialogBackgroundColor: Colors.white,
+      dialogBackgroundColor: Colors.grey[300],
       body: _BodyDialog(notifier: notifier, userUid: userUid),
     );
   }
@@ -162,8 +161,7 @@ class __BodyDialogState extends State<_BodyDialog> {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
       child: Center(
-        child: Text(Labels.of(context).getMessage("new_cupboard"),
-            style: TextStyle(color: ArgonColors.text, fontSize: 16.0)),
+        child: LocaleText.title("new_cupboard"),
       ),
     );
   }
@@ -171,11 +169,11 @@ class __BodyDialogState extends State<_BodyDialog> {
   Widget _buildTextName(BuildContext context) {
     return _buildInputWrapper(FormInput(
       onChanged: (value) => setState(() => _name = value),
-      placeholder: Labels.of(context).getMessage('cupboard_name'),
+      placeholder: "cupboard_name",
       keyboardType: TextInputType.name,
       prefixIcon: Icon(Icons.account_balance_wallet_rounded),
       validator: (value) => Validator<String>(context, value)
-          .mandatory(msg: 'mandatory_name')
+          .mandatory(msg: "mandatory_name")
           .length(min: 4, max: 32)
           .validate(),
     ));
@@ -208,7 +206,6 @@ class __BodyDialogState extends State<_BodyDialog> {
               onPressed: () {
                 if (_formKey.currentState!.validate() && _image != null) {
                   final Cupboard cupboard = new Cupboard(
-                    count: 0,
                     image: _image!,
                     name: _name!,
                     owner: widget.userUid,

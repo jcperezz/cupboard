@@ -61,13 +61,16 @@ class CardCupboard extends StatelessWidget {
                           fontSize: 25,
                         )),
                     _buildTextStatusCount(
-                        lb.getMessage("count_inventory_all", [10]),
+                        lb.getMessage(
+                            "count_inventory_all", [cupboard.totalItems]),
                         InventoryStatus.all),
                     _buildTextStatusCount(
-                        lb.getMessage("count_inventory_close_to_expire", [10]),
+                        lb.getMessage("count_inventory_close_to_expire",
+                            [cupboard.totalCloseToExpire]),
                         InventoryStatus.close_to_expire),
                     _buildTextStatusCount(
-                        lb.getMessage("count_inventory_expired", [10]),
+                        lb.getMessage(
+                            "count_inventory_expired", [cupboard.totalExpired]),
                         InventoryStatus.expired),
                     Expanded(child: const SizedBox.shrink()),
                     _buildCollaboratorsDetail(),
