@@ -20,9 +20,15 @@ class Product extends Entity {
 
   String toJson() => json.encode(toMap());
 
-  factory Product.fromMap(String id, Map<String, dynamic> json) => Product(
+  factory Product.fromMap(
+    String id,
+    String? cupboardUid,
+    Map<String, dynamic> json,
+  ) =>
+      Product(
         category: json["category"],
         name: json["name"],
+        cupboardUid: cupboardUid,
         id: id,
       );
 
@@ -39,5 +45,5 @@ class Product extends Entity {
       };
 
   @override
-  String toString() => name;
+  String toString() => "$name $category $owner $cupboardUid";
 }

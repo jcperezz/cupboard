@@ -40,6 +40,7 @@ class Labels {
       'show_products': 'Show Items',
       'select_image': 'Please select an image *',
       'new_category': 'New category',
+      'edit_category': 'Edit category',
       'view_options': 'View options',
       'category_name': 'Category name',
       'unknown_error': 'Unknown Error',
@@ -79,6 +80,13 @@ class Labels {
       'count_inventory_expired': r'$0 items expired',
       'empty_cupboards': 'Ups! is empty, add a cupboard',
       'empty_cupboard': 'Ups! is empty, add products',
+      'categories_label': 'Categories',
+      'products_label': 'Products',
+      'edit_label_general': 'Edit',
+      'delete_label_general': 'Delete',
+      'new_product': 'Add Product',
+      'edit_product': 'Edit Product',
+      'product_name': 'Product Name',
     },
     'es': {
       'title': 'Hola Mundo',
@@ -111,6 +119,7 @@ class Labels {
       'show_products': 'Ver elementos',
       'select_image': 'Seleccione una imagen *',
       'new_category': 'Nueva categoría',
+      'edit_category': 'Editar categoría',
       'view_options': 'Opciones de vista',
       'category_name': 'Nombre Categoría',
       'unknown_error': 'Error desconocido',
@@ -150,20 +159,30 @@ class Labels {
       'count_inventory_expired': r'$0 productos expirados',
       'empty_cupboards': 'Ups! está vacío, agrega una alacena',
       'empty_cupboard': 'Ups! está vacío, agrega productos',
+      'categories_label': 'Categorías',
+      'products_label': 'Productos',
+      'edit_label_general': 'Editar',
+      'delete_label_general': 'Eliminar',
+      'new_product': 'Crear Producto',
+      'edit_product': 'Editar Producto',
+      'product_name': 'Nombre del Producto',
     },
   };
 
   static List<String> languages() => _localizedValues.keys.toList();
 
-  static String interpolate(String message, [List<dynamic> args = const []]) {
-    for (var i = 0; i < args.length; i++) {
-      message = message.replaceAll(r'$' + i.toString(), args[i].toString());
-    }
+  static String interpolate(String message, [List<dynamic>? args = const []]) {
+    var msg = message;
 
-    return message;
+    if (args != null)
+      for (var i = 0; i < args.length; i++) {
+        msg = message.replaceAll(r'$' + i.toString(), args[i].toString());
+      }
+
+    return msg;
   }
 
-  String getMessage(String? key, [List<dynamic> args = const []]) {
+  String getMessage(String? key, [List<dynamic>? args = const []]) {
     if (key == null) {
       return "";
     }

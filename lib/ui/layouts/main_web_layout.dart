@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 class MainWebLayout extends StatelessWidget {
   final Widget child;
   final String title;
+  final String? cupboardUid;
   final bool showNavBar;
   final bool showFooterBar;
 
@@ -19,6 +20,7 @@ class MainWebLayout extends StatelessWidget {
     required this.title,
     this.showNavBar = false,
     this.showFooterBar = false,
+    this.cupboardUid,
   });
 
   @override
@@ -60,7 +62,8 @@ class MainWebLayout extends StatelessWidget {
     final Labels labels = Labels.of(context);
     return Scaffold(
       appBar: showNavBar ? NavBar2(title: labels.getMessage(title)) : null,
-      bottomNavigationBar: showFooterBar ? BottomNavBar() : null,
+      bottomNavigationBar:
+          showFooterBar ? BottomNavBar(cupboardUid: cupboardUid) : null,
       backgroundColor: Colors.transparent,
       extendBody: true,
       body: Center(child: child),
@@ -152,8 +155,11 @@ class NavBar2 extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class BottomNavBar extends StatelessWidget {
+  final String? cupboardUid;
+
   const BottomNavBar({
     Key? key,
+    this.cupboardUid,
   }) : super(key: key);
 
   @override
@@ -177,7 +183,8 @@ class BottomNavBar extends StatelessWidget {
             color: Colors.white,
             tooltip: lb.getMessage("inventory_navbar_label"),
             onPressed: () {
-              Navigator.of(context).pushReplacementNamed("/home");
+              Navigator.of(context)
+                  .pushReplacementNamed("/inventory/$cupboardUid");
             },
           ),
           SizedBox(
@@ -187,7 +194,8 @@ class BottomNavBar extends StatelessWidget {
             icon: Icon(Icons.category_rounded),
             color: Colors.white,
             tooltip: lb.getMessage("catalog_navbar_label"),
-            onPressed: () {},
+            onPressed: () => Navigator.of(context)
+                .pushReplacementNamed("/catalog/$cupboardUid"),
           ),
           IconButton(
             icon: Icon(Icons.add_shopping_cart),

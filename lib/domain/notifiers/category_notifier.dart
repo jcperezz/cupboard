@@ -3,15 +3,15 @@ import 'package:cupboard/domain/repositories/abstract_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class CategoryNotifier extends ChangeNotifier {
-  final String? uid;
   final String? cupboardUid;
 
   late final AbstractRepository<Category> categoryRepository;
 
   bool isLoading = true;
   Map<String, Category> categories = Map();
+  Map<String, Category> filteredCategories = Map();
 
-  CategoryNotifier(this.uid, this.cupboardUid, this.categoryRepository) {
+  CategoryNotifier(this.cupboardUid, this.categoryRepository) {
     getCategories();
   }
 
@@ -30,7 +30,26 @@ class CategoryNotifier extends ChangeNotifier {
 
     categories = Map.unmodifiable(categories);
 
+    await filter();
+
     isLoading = false;
+    notifyListeners();
+  }
+
+  filter([String? search]) {
+    filteredCategories.clear();
+
+    if (search == null || search.isEmpty) {
+      filteredCategories.addAll(categories);
+      return;
+    }
+
+    categories.forEach((key, value) {
+      if (value.name.toLowerCase().contains(search.toLowerCase())) {
+        filteredCategories[key] = value;
+      }
+    });
+
     notifyListeners();
   }
 
@@ -38,6 +57,24 @@ class CategoryNotifier extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     categoryRepository.add(category);
+    getCategories();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> delete(Category category) async {
+    isLoading = true;
+    notifyListeners();
+    categoryRepository.remove(category);
+    getCategories();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> update(Category category) async {
+    isLoading = true;
+    notifyListeners();
+    categoryRepository.update(category);
     getCategories();
     isLoading = false;
     notifyListeners();

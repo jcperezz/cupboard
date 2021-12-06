@@ -1,5 +1,5 @@
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:fluro/fluro.dart';
 import 'package:provider/provider.dart';
 
 import 'package:cupboard/data/injectors/dependency_injector.dart';
@@ -84,12 +84,10 @@ final newProductHandler = Handler(handlerFunc: (context, params) {
     return Layout(LoadingScreen(), title: "Loading");
   } else if (authProvider.uid != null) {
     final categoryNotifier = CategoryNotifier(
-      authProvider.uid,
       cupboardUid,
       DI.getIt<FireCategoryRepository>(),
     );
     final productNotifier = ProductItemNotifier(
-      authProvider.uid,
       cupboardUid,
       DI.getIt<FireProductItemRepository>(),
       DI.getIt<FireProductRepository>(),
@@ -105,6 +103,7 @@ final newProductHandler = Handler(handlerFunc: (context, params) {
       ),
       title: product.id != null ? "Edit Product" : "New Product",
       showNavBar: true,
+      cupboardUid: cupboardUid,
     );
   } else {
     return Layout(LoginScreen(), title: "Login");
@@ -120,13 +119,11 @@ final inventoryHandler = Handler(handlerFunc: (context, params) {
     return Layout(LoadingScreen(), title: "Loading");
   } else if (authProvider.uid != null) {
     final categoryNotifier = CategoryNotifier(
-      authProvider.uid,
       cupboardUid,
       DI.getIt<FireCategoryRepository>(),
     );
 
     final productItemNotifier = ProductItemNotifier(
-      authProvider.uid,
       cupboardUid,
       DI.getIt<FireProductItemRepository>(),
       DI.getIt<FireProductRepository>(),
@@ -150,6 +147,44 @@ final inventoryHandler = Handler(handlerFunc: (context, params) {
       title: "Inventory",
       showNavBar: true,
       showFooterBar: true,
+      cupboardUid: cupboardUid,
+    );
+  } else {
+    return Layout(LoginScreen(), title: "Login");
+  }
+});
+
+final catalogHandler = Handler(handlerFunc: (context, params) {
+  final authProvider = Provider.of<AuthenticationNotifier>(context!);
+
+  String? cupboardUid = params['uid']?.first;
+
+  if (authProvider.isLoading) {
+    return Layout(LoadingScreen(), title: "Loading");
+  } else if (authProvider.uid != null) {
+    final categoryNotifier = CategoryNotifier(
+      cupboardUid,
+      DI.getIt<FireCategoryRepository>(),
+    );
+
+    final productNotifier = ProductNotifier(
+      authProvider.uid,
+      cupboardUid,
+      DI.getIt<FireProductRepository>(),
+    );
+
+    return Layout(
+      MultiProvider(
+        child: CatalogScreen(cupboardUid: cupboardUid!),
+        providers: [
+          ChangeNotifierProvider.value(value: categoryNotifier),
+          ChangeNotifierProvider.value(value: productNotifier),
+        ],
+      ),
+      title: "Administrar Catálogo",
+      showNavBar: true,
+      showFooterBar: true,
+      cupboardUid: cupboardUid,
     );
   } else {
     return Layout(LoginScreen(), title: "Login");
@@ -174,6 +209,9 @@ class RouterManager {
 
     router.define('/inventory/:uid',
         handler: inventoryHandler, transitionType: TransitionType.fadeIn);
+
+    router.define('/catalog/:uid',
+        handler: catalogHandler, transitionType: TransitionType.fadeIn);
 
     router.define('/product/:uid',
         handler: newProductHandler, transitionType: TransitionType.fadeIn);

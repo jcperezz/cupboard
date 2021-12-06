@@ -8,10 +8,10 @@ class FireCategoryRepository extends AbstractFireRepository<Category> {
     final DatabaseReference db = getDb();
     await db
         .child("cupboards/${entity.cupboardUid}")
-        .child(entity.id != null ? "$path/${entity.id}" : path)
+        .child(path)
         .push()
         .set(entity.toMap());
-    return db.key;
+    return "";
   }
 
   @override
@@ -24,8 +24,8 @@ class FireCategoryRepository extends AbstractFireRepository<Category> {
 
     if (snapshot.value != null) {
       Map<String, dynamic> response = snapshot.value;
-      categories = response
-          .map((key, value) => new MapEntry(key, Category.fromMap(key, value)));
+      categories = response.map((key, value) =>
+          new MapEntry(key, Category.fromMap(key, cupboardUid, value)));
     }
 
     return categories;
@@ -38,15 +38,19 @@ class FireCategoryRepository extends AbstractFireRepository<Category> {
   }
 
   @override
-  Future<void> remove(Category entity) {
-    // TODO: implement remove
-    throw UnimplementedError();
+  Future<void> remove(Category entity) async {
+    DatabaseReference db = getDb()
+        .child("cupboards/${entity.cupboardUid}")
+        .child("$path/${entity.id}");
+    await db.remove();
   }
 
   @override
-  Future<void> update(Category entity) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update(Category entity) async {
+    DatabaseReference db = getDb()
+        .child("cupboards/${entity.cupboardUid}")
+        .child("$path/${entity.id}");
+    await db.set(entity.toMap());
   }
 
   @override

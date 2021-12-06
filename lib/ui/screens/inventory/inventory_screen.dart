@@ -6,20 +6,14 @@ import 'package:cupboard/ui/widgets/empty_background.dart';
 import 'package:cupboard/ui/widgets/menu_status_filter.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:provider/provider.dart';
 
 import 'package:cupboard/locale/labels.dart';
 
-import 'package:cupboard/constants/validators.dart';
 import 'package:cupboard/constants/Theme.dart';
-
-import 'package:cupboard/widgets/button.dart';
-import 'package:cupboard/widgets/form-input.dart';
 
 import 'package:cupboard/domain/notifiers/product_item_notifier.dart';
 import 'package:cupboard/domain/notifiers/category_notifier.dart';
@@ -39,7 +33,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   String? _searchName;
   InventoryStatus? _searchStatus;
-  int _viewOptionSeleted = 1;
   bool _isLoading = true;
 
   Map<String, List<ProductItem>> _filteredProductsMap = Map();
@@ -113,7 +106,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       children: [
         _buildPageTitle(context),
         _buildBodyItems(categories),
-        _buildAddCategoryTitle(context),
+        //_buildAddCategoryTitle(context),
       ],
     );
   }
@@ -122,7 +115,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     if (_filteredProductsMap.isEmpty)
       return Expanded(child: EmptyBackground(keyMessage: "empty_cupboard"));
 
-    return CategoriesProductsItemList(
+    return CategoriesProductsItemList<ProductItem>(
       categories: categories,
       products: _filteredProductsMap,
       cupboardUid: widget.cupboardId,
@@ -142,8 +135,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
             _buildSearchBar(lb),
             VerticalDivider(color: ArgonColors.muted),
             _buildMenuStatuFilter(),
-            //VerticalDivider(color: ArgonColors.muted),
-            //_buildViewOptionsMenu(),
           ],
         ),
       ),
@@ -196,71 +187,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  Widget _buildViewOptionsMenu() {
-    final lb = Labels.of(context);
-
-    return PopupMenuButton(
-        tooltip: lb.getMessage("view_options"),
-        initialValue: _viewOptionSeleted,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Icon(Icons.view_comfortable_rounded, color: Colors.white),
-          ],
-        ),
-        itemBuilder: (context) => <PopupMenuEntry>[
-              PopupMenuItem(
-                value: 1,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.view_comfortable_rounded),
-                      SizedBox(width: 5),
-                      Text("Tiles"),
-                    ],
-                  ),
-                ),
-              ),
-              PopupMenuItem(
-                value: 2,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.list),
-                      SizedBox(width: 5),
-                      Text("List"),
-                    ],
-                  ),
-                ),
-              ),
-              PopupMenuDivider(),
-              PopupMenuItem(
-                value: 3,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Group items"),
-                      //SizedBox(width: 5),
-                      Switch(value: true, onChanged: (value) => print("tales")),
-                    ],
-                  ),
-                ),
-              ),
-            ]);
-  }
-
   Widget _buildSearchBar(Labels lb) {
     return Flexible(
       child: ConstrainedBox(
@@ -299,140 +225,5 @@ class _InventoryScreenState extends State<InventoryScreen> {
             },
           )
         : Icon(Icons.search_outlined);
-  }
-
-  Widget _buildAddCategoryTitle(BuildContext context) {
-    return Container(
-      height: 45,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: () => _buildDialog(context).show(),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.add, color: Colors.white),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(Labels.of(context).getMessage("new_category"),
-                    style: ArgonColors.titleWhite),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  AwesomeDialog _buildDialog(BuildContext context) {
-    final CategoryNotifier notifier =
-        Provider.of<CategoryNotifier>(context, listen: false);
-
-    return AwesomeDialog(
-      context: context,
-      width: MediaQuery.of(context).size.width * (kIsWeb ? 0.35 : 0.75),
-      dialogType: DialogType.NO_HEADER,
-      animType: AnimType.BOTTOMSLIDE,
-      dialogBackgroundColor: Colors.white,
-      body: _BodyDialog(service: notifier),
-    );
-  }
-}
-
-class _BodyDialog extends StatefulWidget {
-  final CategoryNotifier service;
-  const _BodyDialog({
-    Key? key,
-    required this.service,
-  }) : super(key: key);
-
-  @override
-  __BodyDialogState createState() => __BodyDialogState();
-}
-
-class __BodyDialogState extends State<_BodyDialog> {
-  final _formKey = GlobalKey<FormState>();
-  String? _name;
-  String? _image;
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-        autovalidateMode: AutovalidateMode.always,
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildFormTitle(context),
-            _buildTextName(context),
-            _buildFormButtons(context)
-          ],
-        ));
-  }
-
-  Widget _buildFormTitle(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-      child: Center(
-        child: Text(Labels.of(context).getMessage("new_category"),
-            style: TextStyle(color: ArgonColors.text, fontSize: 16.0)),
-      ),
-    );
-  }
-
-  Widget _buildTextName(BuildContext context) {
-    return _buildInputWrapper(FormInput(
-      onChanged: (value) => setState(() => _name = value),
-      placeholder: Labels.of(context).getMessage('category_name'),
-      keyboardType: TextInputType.text,
-      textCapitalization: TextCapitalization.words,
-      prefixIcon: Icon(Icons.category_rounded),
-      validator: (value) => Validator<String>(context, value)
-          .mandatory(msg: 'mandatory_name')
-          .length(min: 4, max: 32)
-          .validate(),
-    ));
-  }
-
-  Widget _buildInputWrapper(Widget child) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: child,
-    );
-  }
-
-  Widget _buildFormButtons(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Center(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Button.secondary(
-              keyMessage: "cancel_label",
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Button.primary(
-              keyMessage: "save_label",
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  Category newCategory = Category(
-                    name: _name!,
-                    owner: widget.service.uid,
-                  );
-                  widget.service.addCategory(newCategory);
-                }
-
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

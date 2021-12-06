@@ -8,3 +8,7 @@ export 'package:cupboard/ui/screens/user/register.dart';
 export 'package:cupboard/ui/screens/loading.dart';
 
 export 'package:cupboard/ui/layouts/layout.dart';
+
+export 'package:cupboard/ui/screens/catalog/catalog_screen.dart';
+export 'package:cupboard/ui/screens/catalog/category_screen.dart';
+export 'package:cupboard/ui/screens/catalog/products_screen.dart';

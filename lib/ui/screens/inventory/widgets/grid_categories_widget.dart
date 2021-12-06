@@ -1,3 +1,4 @@
+import 'package:cupboard/domain/entities/product.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cupboard/locale/labels.dart';
@@ -10,19 +11,22 @@ import 'package:cupboard/ui/screens/inventory/widgets/grid_products_widget.dart'
 import 'package:cupboard/ui/widgets/menu_status_filter.dart';
 
 // ignore: must_be_immutable
-class CategoriesProductsItemList extends StatefulWidget {
+class CategoriesProductsItemList<T extends Product> extends StatefulWidget {
   final List<Category> categories;
-  final Map<String, List<ProductItem>> products;
-  final Map<String, List<ProductItem>> _productsTarget = Map();
-
+  final Map<String, List<T>> products;
+  final Map<String, List<T>> _productsTarget = Map();
+  final bool isProductItem;
+  final bool skipEmpty;
   final String cupboardUid;
 
-  CategoriesProductsItemList(
-      {Key? key,
-      required this.categories,
-      required this.products,
-      required this.cupboardUid})
-      : super(key: key) {
+  CategoriesProductsItemList({
+    Key? key,
+    required this.categories,
+    required this.products,
+    required this.cupboardUid,
+    this.isProductItem = true,
+    this.skipEmpty = true,
+  }) : super(key: key) {
     _productsTarget.addAll(products);
   }
 
@@ -48,12 +52,13 @@ class _CategoriesProductsItemListState
   }
 
   Widget _buildGridProducts(BuildContext context, Category category) {
-    if (widget.products[category.id] == null) return Container();
+    if (widget.skipEmpty && widget.products[category.id] == null)
+      return Container();
 
     return ExpansionTile(
       title: _buildCategoryTitle(category),
       initiallyExpanded: widget.products[category.id] != null,
-      trailing: _buildMenuFilter(category),
+      trailing: widget.isProductItem ? _buildMenuFilter(category) : null,
       children: [
         if (widget.products[category.id] != null)
           ProductsGrid(
@@ -64,7 +69,7 @@ class _CategoriesProductsItemListState
     );
   }
 
-  MenuStatusFilter _buildMenuFilter(Category category) {
+  Widget _buildMenuFilter(Category category) {
     final Map<InventoryStatus, GestureTapCallback> eventOptions = {
       InventoryStatus.all: () {
         _findProductsByStatus(null, null);
@@ -85,7 +90,7 @@ class _CategoriesProductsItemListState
     };
 
     return MenuStatusFilter(
-      products: widget.products[category.id],
+      products: (widget.products[category.id] as List<ProductItem>),
       eventOptions: eventOptions,
     );
   }
@@ -100,7 +105,8 @@ class _CategoriesProductsItemListState
           final productsList = <ProductItem>[];
 
           if (widget._productsTarget[categoryId] != null) {
-            widget._productsTarget[categoryId]!.forEach((element) {
+            (widget._productsTarget[categoryId] as List<ProductItem>)
+                .forEach((element) {
               if (element.productStatus == status) productsList.add(element);
             });
           }

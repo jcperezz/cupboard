@@ -15,9 +15,12 @@ class Category extends Entity {
 
   String toJson() => json.encode(toMap());
 
-  factory Category.fromMap(String id, Map<dynamic, dynamic> json) => Category(
+  factory Category.fromMap(
+          String id, String? cupboardUid, Map<dynamic, dynamic> json) =>
+      Category(
         id: id,
         name: json["name"],
+        cupboardUid: cupboardUid,
       );
 
   Map<String, dynamic> toMap() => {

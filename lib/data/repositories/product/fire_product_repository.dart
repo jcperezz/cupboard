@@ -8,9 +8,11 @@ class FireProductRepository extends AbstractFireRepository<Product> {
   @override
   Future<String> add(Product entity) async {
     final DatabaseReference db = getDb();
-    db.child("cupboards/${entity.cupboardUid}").child(path).push();
-    await db.set(entity.toMap());
-
+    await db
+        .child("cupboards/${entity.cupboardUid}")
+        .child(path)
+        .push()
+        .set(entity.toMap());
     return "";
   }
 
@@ -26,8 +28,7 @@ class FireProductRepository extends AbstractFireRepository<Product> {
       Map<String, dynamic> response = snapshot.value;
 
       response.forEach((key, value) {
-        print("$value");
-        list[key] = Product.fromMap(key, value);
+        list[key] = Product.fromMap(key, parentUid, value);
       });
     }
 
@@ -54,14 +55,18 @@ class FireProductRepository extends AbstractFireRepository<Product> {
   }
 
   @override
-  Future<void> remove(Product entity) {
-    // TODO: implement remove
-    throw UnimplementedError();
+  Future<void> remove(Product entity) async {
+    DatabaseReference db = getDb()
+        .child("cupboards/${entity.cupboardUid}")
+        .child("$path/${entity.id}");
+    await db.remove();
   }
 
   @override
-  Future<void> update(Product entity) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update(Product entity) async {
+    DatabaseReference db = getDb()
+        .child("cupboards/${entity.cupboardUid}")
+        .child("$path/${entity.id}");
+    await db.set(entity.toMap());
   }
 }

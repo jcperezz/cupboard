@@ -10,7 +10,6 @@ class ProductItemNotifier extends ChangeNotifier {
   final AbstractRepository<ProductItem> productItemRepository;
   final AbstractRepository<Product> productRepository;
 
-  final String? userUid;
   final String? cupboardUid;
 
   bool isLoading = true;
@@ -21,8 +20,8 @@ class ProductItemNotifier extends ChangeNotifier {
   List<ProductItem> productsList = [];
   List<ProductItem> filteredProductsList = [];
 
-  ProductItemNotifier(this.userUid, this.cupboardUid,
-      this.productItemRepository, this.productRepository) {
+  ProductItemNotifier(
+      this.cupboardUid, this.productItemRepository, this.productRepository) {
     getAll();
   }
 

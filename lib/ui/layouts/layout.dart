@@ -9,13 +9,16 @@ class Layout extends StatelessWidget {
   final String title;
   final bool showNavBar;
   final bool showFooterBar;
+  final String? cupboardUid;
 
-  const Layout(this.child,
-      {Key? key,
-      required this.title,
-      this.showNavBar = false,
-      this.showFooterBar = false})
-      : super(key: key);
+  const Layout(
+    this.child, {
+    Key? key,
+    required this.title,
+    this.showNavBar = false,
+    this.showFooterBar = false,
+    this.cupboardUid,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,7 @@ class Layout extends StatelessWidget {
             title: title,
             showNavBar: showNavBar,
             showFooterBar: showFooterBar,
+            cupboardUid: cupboardUid,
           )
         : MainLayout(child, title: title);
   }
