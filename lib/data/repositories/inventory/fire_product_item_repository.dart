@@ -21,9 +21,9 @@ class FireProductItemRepository extends AbstractFireRepository<ProductItem> {
     DataSnapshot snapshot = await db.child(path).get();
 
     if (snapshot.value != null) {
-      Map<String, dynamic> response = snapshot.value;
-      list = response.map((key, value) =>
-          new MapEntry(key, ProductItem.fromMap(value, id: key)));
+      Map<String, dynamic> response = Map<String, dynamic>.from(snapshot.value);
+      list = response.map((key, value) => new MapEntry(
+          key, ProductItem.fromMap(Map<String, dynamic>.from(value), id: key)));
     }
 
     return UnmodifiableMapView(list);

@@ -38,6 +38,7 @@ class _ProductItemScreenState extends State<ProductItemScreen> {
   int? _quantity;
   String? _categoryUid;
   DateTime? _expirationDate;
+  String? _qrCode;
   TextEditingController _expirationDateController = TextEditingController();
   Map<String, Category> _categoriesMap = Map();
 
@@ -157,6 +158,23 @@ class _ProductItemScreenState extends State<ProductItemScreen> {
         onChanged: (value) => setState(() => _categoryUid = value?.id),
         validator: (value) => Validator<Category>(context, value)
             .mandatory(msg: "category_mandatory")
+            .validate(),
+      ),
+    );
+  }
+
+  Widget _buildQrCode() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: FormInput(
+        //initialValue: widget.toEdit != null ? widget.toEdit!.name : null,
+        onChanged: (value) => setState(() => _qrCode = value),
+        placeholder: "product_name",
+        maxLength: 32,
+        keyboardType: TextInputType.name,
+        prefixIcon: Icon(Icons.ac_unit_outlined),
+        validator: (value) => Validator<String>(context, value)
+            .mandatory(msg: 'mandatory_name')
             .validate(),
       ),
     );

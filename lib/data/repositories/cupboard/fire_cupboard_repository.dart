@@ -51,8 +51,8 @@ class FireCupboardRepository extends AbstractFireRepository<Cupboard> {
     DataSnapshot snapshot = await getCurrentUserPath().child(id).get();
 
     if (snapshot.value != null) {
-      Map<String, dynamic> response = snapshot.value;
-      return Cupboard.fromMap(response, id: id);
+      Map<String, dynamic> response = Map<String, dynamic>.from(snapshot.value);
+      return Cupboard.fromMap(Map<String, dynamic>.from(response), id: id);
     }
 
     return null;

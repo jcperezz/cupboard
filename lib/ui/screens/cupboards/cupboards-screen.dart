@@ -105,7 +105,7 @@ class CupboardsScreen extends StatelessWidget {
       [Cupboard? cupboard]) {
     return AwesomeDialog(
       context: context,
-      width: MediaQuery.of(context).size.width * (kIsWeb ? 0.35 : 0.75),
+      width: MediaQuery.of(context).size.width * (kIsWeb ? 0.35 : 0.95),
       dialogType: DialogType.NO_HEADER,
       animType: AnimType.BOTTOMSLIDE,
       dialogBackgroundColor: Colors.grey,

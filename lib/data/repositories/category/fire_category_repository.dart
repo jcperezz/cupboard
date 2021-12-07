@@ -23,7 +23,7 @@ class FireCategoryRepository extends AbstractFireRepository<Category> {
         : await getDb().child("cupboards/$cupboardUid").child(path).get();
 
     if (snapshot.value != null) {
-      Map<String, dynamic> response = snapshot.value;
+      Map<String, dynamic> response = Map<String, dynamic>.from(snapshot.value);
       categories = response.map((key, value) =>
           new MapEntry(key, Category.fromMap(key, cupboardUid, value)));
     }
@@ -62,7 +62,7 @@ class FireCategoryRepository extends AbstractFireRepository<Category> {
     final DatabaseReference db = getDb().child("cupboards/$parentUid");
 
     if (snapshot.value != null) {
-      Map<String, dynamic> response = snapshot.value;
+      Map<String, dynamic> response = Map<String, dynamic>.from(snapshot.value);
       db.child(path).set(response);
     }
   }

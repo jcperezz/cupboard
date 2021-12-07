@@ -41,16 +41,16 @@ class MyFirebaseApp extends StatefulWidget {
 
 class _MyFirebaseAppState extends State<MyFirebaseApp> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyBPqmjAba0QRHkGLr7SRX8SBl8rDGNGTN8",
-      authDomain: "cupboard-54d1c.firebaseapp.com",
-      databaseURL: "https://cupboard-54d1c-default-rtdb.firebaseio.com",
-      projectId: "cupboard-54d1c",
-      storageBucket: "cupboard-54d1c.appspot.com",
-      messagingSenderId: "1079318247904",
-      appId: "1:1079318247904:web:d44e6909e446410aec5385",
-    ),
-  );
+      // options: const FirebaseOptions(
+      //   apiKey: "AIzaSyBPqmjAba0QRHkGLr7SRX8SBl8rDGNGTN8",
+      //   authDomain: "cupboard-54d1c.firebaseapp.com",
+      //   databaseURL: "https://cupboard-54d1c-default-rtdb.firebaseio.com",
+      //   projectId: "cupboard-54d1c",
+      //   storageBucket: "cupboard-54d1c.appspot.com",
+      //   messagingSenderId: "1079318247904",
+      //   appId: "1:1079318247904:web:d44e6909e446410aec5385",
+      // ),
+      );
 
   @override
   Widget build(BuildContext context) {

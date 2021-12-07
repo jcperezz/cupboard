@@ -31,9 +31,12 @@ class Cupboard extends Entity {
 
   factory Cupboard.fromMap(Map<String, dynamic> json, {String? id}) {
     final Map<String, ProductItem>? inventory = json["inventory"] != null
-        ? json["inventory"].map<String, ProductItem>((key, value) =>
-            MapEntry<String, ProductItem>(
-                key, ProductItem.fromMap(value, id: key)))
+        ? json["inventory"].map<String, ProductItem>(
+            (key, value) => MapEntry<String, ProductItem>(
+              key,
+              ProductItem.fromMap(Map<String, dynamic>.from(value), id: key),
+            ),
+          )
         : null;
 
     int totalItems = 0;

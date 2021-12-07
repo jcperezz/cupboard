@@ -21,10 +21,12 @@ class UserData extends Entity {
     List<UserCupboard> list = [];
 
     if (json["cupboards"] != null) {
-      Map<String, dynamic> result = json["cupboards"];
+      Map<String, dynamic> result =
+          Map<String, dynamic>.from(json["cupboards"]);
 
       result.forEach((key, value) {
-        list.add(UserCupboard.fromMap(value, id: key));
+        list.add(
+            UserCupboard.fromMap(Map<String, dynamic>.from(value), id: key));
       });
     }
 

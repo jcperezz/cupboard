@@ -25,10 +25,11 @@ class FireProductRepository extends AbstractFireRepository<Product> {
         : await getDb().child("cupboards/$parentUid").child(path).get();
 
     if (snapshot.value != null) {
-      Map<String, dynamic> response = snapshot.value;
+      Map<String, dynamic> response = Map<String, dynamic>.from(snapshot.value);
 
       response.forEach((key, value) {
-        list[key] = Product.fromMap(key, parentUid, value);
+        list[key] =
+            Product.fromMap(key, parentUid, Map<String, dynamic>.from(value));
       });
     }
 
@@ -49,7 +50,7 @@ class FireProductRepository extends AbstractFireRepository<Product> {
     final DatabaseReference db = getDb().child("cupboards/$parentUid");
 
     if (snapshot.value != null) {
-      Map<String, dynamic> response = snapshot.value;
+      Map<String, dynamic> response = Map<String, dynamic>.from(snapshot.value);
       db.child(path).set(response);
     }
   }

@@ -32,7 +32,7 @@ class FireUserDataRepository extends AbstractFireRepository<UserData> {
     DataSnapshot snapshot = await getDb(id).get();
 
     if (snapshot.value != null) {
-      Map<String, dynamic> response = snapshot.value;
+      Map<String, dynamic> response = Map<String, dynamic>.from(snapshot.value);
       UserData user = UserData.fromMap(response);
       return user;
     }

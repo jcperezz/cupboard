@@ -1,7 +1,7 @@
+import 'package:cupboard/ui/layouts/main_mobile_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:cupboard/ui/layouts/main_layout.dart';
 import 'package:cupboard/ui/layouts/main_web_layout.dart';
 
 class Layout extends StatelessWidget {
@@ -30,6 +30,12 @@ class Layout extends StatelessWidget {
             showFooterBar: showFooterBar,
             cupboardUid: cupboardUid,
           )
-        : MainLayout(child, title: title);
+        : MainMobileLayout(
+            child,
+            title: title,
+            showNavBar: showNavBar,
+            showFooterBar: showFooterBar,
+            cupboardUid: cupboardUid,
+          );
   }
 }

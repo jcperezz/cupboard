@@ -81,7 +81,7 @@ class _SearchBarState extends State<SearchBar> {
   Widget _buildExpandableBody() {
     return Container(
       width: double.infinity,
-      height: 440,
+      height: MediaQuery.of(context).size.height * 0.40,
       child: ProductsGrid(
         products: _products,
         cardColor: Colors.blue,
